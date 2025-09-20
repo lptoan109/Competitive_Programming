@@ -22,6 +22,8 @@ void xuatmt(int n, int m){
     }
 }
 void luuramang(int n, int m){
+    if(n!=m) cout << "No";
+    else{
         int j = 1,na;
         na = 0;
         for(int i = 0; i<m; ++i){
@@ -34,8 +36,11 @@ void luuramang(int n, int m){
             j++;
         }
         xuatma(na);
+    }
 }
 void doicho(int n, int m){
+    if(n!=m) cout << "No\n";
+    else{
         double ln;
         for(int i = 0; i<n; ++i){
             ln = -DBL_MAX;
@@ -52,64 +57,73 @@ void doicho(int n, int m){
             }
         }
         xuatmt(n,m);
+    }
 }
 void sapxep(int n, int m){
-    double mt1[105][105];
-    for(int i = 0; i<n; ++i)
+    if(n!=m) cout << "No\n";
+    else{
+        double mt1[105][105];
+        for(int i = 0; i<n; ++i)
+            for(int j = 0; j<m; ++j){
+                mt1[i][j] = mt[i][j];
+            }
+        double nn;
         for(int j = 0; j<m; ++j){
-            mt1[i][j] = mt[i][j];
-        }
-    double nn;
-    for(int j = 0; j<m; ++j){
-        nn = DBL_MAX;
-        for(int i = j; i<m; ++i){
-            if(mt[i][i]<nn)
-                nn = mt[i][i];
-        }
-        for(int i = 0; i<m; ++i){
-            if(mt[i][i]==nn){
-                swap(mt[i][i], mt[j][j]);
-                break;
+            nn = DBL_MAX;
+            for(int i = j; i<m; ++i){
+                if(mt[i][i]<nn)
+                    nn = mt[i][i];
+            }
+            for(int i = 0; i<m; ++i){
+                if(mt[i][i]==nn){
+                    swap(mt[i][i], mt[j][j]);
+                    break;
+                }
             }
         }
-    }
-    int j = 1,q=1;
-    double ln;
-    for(int k = 0; k<m; ++k){
-        ln = -DBL_MAX;
-        for(int i = k; i<m; ++i){
-            if(mt[i][m-j]>ln)
-                ln = mt[i][m-j];
-            j++;
+        int j = 1,q=1;
+        double ln;
+        for(int k = 0; k<m; ++k){
+            ln = -DBL_MAX;
+            for(int i = k; i<m; ++i){
+                if(mt[i][m-j]>ln)
+                    ln = mt[i][m-j];
+                j++;
+            }
+            j = 1;
+            for(int i = 0; i<m; ++i){
+                if(mt[i][m-j]==ln)
+                    swap(mt[i][m-j], mt[k][m-q]);
+                j++;
+            }
+            q++;
         }
-        j = 1;
-        for(int i = 0; i<m; ++i){
-            if(mt[i][m-j]==ln)
-                swap(mt[i][m-j], mt[k][m-q]);
-            j++;
+        if(n/2!=0){
+            if(mt[n/2-1][n/2-1]>mt[n/2][n/2]||mt[n/2][n/2]>mt[n/2+1][n/2+1]){
+                for(int i = 0; i<n; ++i)
+                    for(int j = 0; j<m; ++j){
+                        mt[i][j] = mt1[i][j];
+                    }
+            }
         }
-        q++;
+        xuatmt(n,m);
     }
-    if(n/2!=0){
-        if(mt[n/2-1][n/2-1]>mt[n/2][n/2]||mt[n/2][n/2]>mt[n/2+1][n/2+1]){
-            for(int i = 0; i<n; ++i)
-                for(int j = 0; j<m; ++j){
-                    mt[i][j] = mt1[i][j];
-                }
-        }
-    }
-    xuatmt(n,m);
 }
 void tongtamgiactren(int n, int m){
-    double s = 0;
-    for (int i = 0; i < n; ++i) {
-        for (int j = i; j < m; ++j) {
-            s += mt[i][j];
+    if(n!=m) cout << "No";
+    else{
+        double s = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = i; j < m; ++j) {
+                s += mt[i][j];
+            }
         }
+        cout << s;
     }
-    cout << s;
 }
 void mangsongsong(int n, int m){
+    if(n!=m) cout << "No";
+    else{
         int d = n-2, c = 0, ld = d, lc = c, na;
         ma[0] = mt[n-1][0];
         for(na = 1; na<(n*m)-1; ++na){
@@ -131,6 +145,7 @@ void mangsongsong(int n, int m){
             }
         }
         xuatma(na);
+    }
 }
 int main()
 {
@@ -140,17 +155,14 @@ int main()
     freopen("BTCB087.OUT", "w", stdout);
     int n,m;
     nhap(n,m);
-    if(n!=m) cout << "No\n\nNo\n\nNo\n\nNo\n\nNo";
-    else{
-        luuramang(n,m);
-        cout << "\n" << "\n";
-        doicho(n,m);
-        cout << "\n";
-        sapxep(n,m);
-        cout << "\n";
-        tongtamgiactren(n,m);
-        cout << "\n" << "\n";
-        mangsongsong(n,m);
-    }
+    luuramang(n,m);
+    cout << "\n" << "\n";
+    doicho(n,m);
+    cout << "\n";
+    sapxep(n,m);
+    cout << "\n";
+    tongtamgiactren(n,m);
+    cout << "\n"<<"\n";
+    mangsongsong(n,m);
     return 0;
 }
