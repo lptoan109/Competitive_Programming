@@ -4,35 +4,23 @@ void nhap(long long &n, long long &x, long long &y){
     cin >> n >> x >> y;
 }
 void xoanoc(long long n, long long x, long long y){
-    double mt[n][n];
-    long long so = 1;
-    long long top = 0, bottom = n-1;
-    long long left = 0, right = n-1;
-    while(so < n*n) {
-        for(long long j = left; j <= right && so < n*n; j++){
-            mt[top][j] = so;
-            so++;
-        }
-        top++;
-        for(long long i = top; i <= bottom && so < n*n; i++){
-            mt[i][right] = so;
-            so++;
-        }
-        right--;
-        for(long long j = right; j >= left && so < n*n; j--){
-            mt[bottom][j] = so;
-            so++;
-        }
-        bottom--;
-        for(long long i = bottom; i >= top && so < n*n; i--){
-            mt[i][left] = so;
-            so++;
-        }
-        left++;
+    double mt[n][n], gt;
+    long long v = INT_MAX;
+    v = min(v,x);
+    v = min(v,y);
+    v = min(v,n-1-x);
+    v = min(v,n-1-y);
+    int l = n-2*v, b = 0, j = 1;
+    for(int i = 0; i<v; ++i){
+        b+=(n-j)*4;
+        j+=2;
     }
-    if(n%2==0) mt[n/2][n/2-1] = so++;
-        else mt[n/2][n/2] = so++;
-    cout << mt[x][y];
+    b++;
+    if(x==v) gt = b+y-v;
+    if(y==n-1-v) gt = b+(l-1)+x+v;
+    if(x==n-1-v) gt = b+(l-1)*2+n-1-v-y;
+    if(y==v) gt = b+(l-1)*3+n-1-v-x;
+    cout << gt;
 }
 int main()
 {
