@@ -1,4 +1,3 @@
-#include <iostream>
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
@@ -6,6 +5,7 @@ int main()
 {
     ll h, m;
     cin >> h >> m;
+    if(h>11||h<0 || m<0 || m>59) cout << " ";
     ll sophut = h*60+m;
     ll k = 0;
     while(k*720 < sophut*11){

@@ -11,9 +11,10 @@ int main()
             else if(c % a != 0 && c % b != 0) cout << "No";
                 else if(c % a == 0 && c % b == 0) cout << "Yes";
                     else{
-
-
-                        cout << d;
+                        while(a*x+b!=c){
+                            x= a*(-c)+b;
+                            y++;
+                        }
                     }
     return 0;
 }
