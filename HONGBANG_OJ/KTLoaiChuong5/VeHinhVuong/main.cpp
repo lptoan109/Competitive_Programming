@@ -1,40 +1,30 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-int main()
-{
-    unsigned int n;
-    cin >> n;
-    if(n==1) cout << "*";
+void vehinhvuong(int n){
+    if(n==1) cout << '*';
     else{
-        for(int c  = 1;c<=n;++c){
-            if(c==1){
-                for(int h = 1;h<=n;++h){
-                    cout << "* ";
-                }
-                cout << "\n";
+        for(int i = 1; i<=n; ++i){
+            cout << "* ";
+        }
+        cout << "\n";
+        for(int i = 2; i<n; ++i){
+            for(int j=1; j<=n; ++j){
+                if(j==1) cout << "* ";
+                    else if(j==n) cout << "*";
+                        else cout << "  ";
             }
-            if(c>1&&c<n){
-                for(int h = 1;h<=n;++h){
-                    if(h==1){
-                        cout << "*";
-                    }
-                    if(h>1&&h<n){
-                        cout << "  ";
-                    }
-                    if(h==n){
-                        cout << "*" << " ";
-                    }
-                }
-                cout << "\n";
-            }
-            if(c==n){
-                for(int h = 1;h<=n;++h){
-                    cout << "* ";
-                }
-            }
+            cout << "\n";
+        }
+        for(int i = 1; i<=n; ++i){
+            cout << "* ";
         }
     }
+}
+int main()
+{
+    int n;
+    cin >> n;
+    vehinhvuong(n);
     return 0;
 }
