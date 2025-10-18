@@ -1,25 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
-vector <ll> a,b,d;
-set <ll> kt;
-int main()
-{
-    string n;
-    getline(cin,n);
-    stringstream t(n);
-    while(t>>n){
-        ll ta = atol(n);
-        a.push_back(ta);
+#define ll long long
+
+vector<ll> veca, vecb, vecc, vecd;
+set<ll> sa, sb, sc;
+
+int main() {
+    string temp;
+
+    getline(cin, temp);
+    stringstream t1(temp);
+    ll x;
+    while (t1 >> x) {
+        if(sa.insert(x).second){
+            vecc.push_back(x);
+        }
+        sc.insert(x);
     }
-    ll na;
-    while(cin>>na){
-        if(a.find(na)!=a.end()) b.push_back(na);
-        else d.push_back(na);
+    getline(cin, temp);
+    getline(cin, temp);
+    stringstream t2(temp);
+    while (t2 >> x) {
+        if(sa.insert(x).second){
+            vecc.push_back(x);
+        }
+        for(auto i:sc){
+            if(i==x) vecd.push_back(x);
+        }
     }
-    a.insert(a.end(),b.begin(),b.end());
-    for(auto i:c) cout << i << " ";
-    cout << "\n";
-    for(auto i:d) cout << i;
+
+    for (auto i : vecc) cout << i << " ";
+    cout << "\n\n";
+    for (auto i : vecd) cout << i << " ";
+
     return 0;
 }

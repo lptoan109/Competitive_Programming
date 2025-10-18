@@ -19,9 +19,7 @@ void bssua(ll d){
     ds.pop_back();
     ll sbds = ds[d-1].first, diems = ds[d-1].second;
     ds.pop_back();
-    ds.insert(ds.begin()+0,0);
-    ds[0].first = sbdbs;
-    ds[0].second = diembs;
+    ds.insert(ds.begin(),make_pair(sbdbs,diembs));
     for(auto i:ds){
         if(i.first==sbds){
             i.second = diems;
@@ -30,11 +28,12 @@ void bssua(ll d){
     }
 }
 void xephang(ll d){
-    for(auto i:ds){
-        if(i.second<20){
-            ds.erase(ds.begin()+i);
-        }
-    }
+    for (auto it = ds.begin(); it != ds.end(); ) {
+    if (it->second < 20)
+        it = ds.erase(it); // xóa và cập nhật iterator
+    else
+        ++it;
+}
     for(auto i:ds){
         cout << i.first << " " << i.second << "\n";
     }
