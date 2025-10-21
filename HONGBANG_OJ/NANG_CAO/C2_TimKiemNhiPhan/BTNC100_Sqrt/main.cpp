@@ -8,7 +8,7 @@ int main()
     ll n;
     cin >> n;
     double n2 = sqrt(n);
-    if(n==n2){
+    if(n==(ll)n2){
         cout << "Yes\n" << n2 << "\n";
     }
     else{
