@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int MAXN = 1e6;
-int a[MAXN+5], b[MAXN+5];
+int a[MAXN+5];
 int bsdt(int x, int m){
     int l = 1, r = m, vt = 0;
     while(l<=r){
@@ -37,8 +37,7 @@ int main()
     for(int i = 1; i<=m; ++i) cin >> a[i];
     sort(a+1, a+m+1);
     for(int i = 1; i<=n; ++i){
-        cin >> b[i];
-        x = b[i];
+        cin >> x;
         int dt = bsdt(x,m), cc = bscc(x,m);
         if(dt==0||cc==0) cout << 0 << "\n";
         else{
