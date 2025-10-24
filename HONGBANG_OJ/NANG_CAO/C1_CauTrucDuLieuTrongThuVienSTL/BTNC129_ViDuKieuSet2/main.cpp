@@ -1,37 +1,51 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 #define ll long long
 
-vector<ll> veca, vecb, vecc, vecd;
-set<ll> sa, sb, sc;
+void readSet(set<int>& s) {
+    string line;
+    getline(cin, line);
+    stringstream ss(line);
+    int num;
+    while (ss >> num) {
+        s.insert(num);
+    }
+}
 
 int main() {
-    string temp;
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
 
-    getline(cin, temp);
-    stringstream t1(temp);
-    ll x;
-    while (t1 >> x) {
-        if(sa.insert(x).second){
-            vecc.push_back(x);
-        }
-        sc.insert(x);
-    }
-    getline(cin, temp);
-    getline(cin, temp);
-    stringstream t2(temp);
-    while (t2 >> x) {
-        if(sa.insert(x).second){
-            vecc.push_back(x);
-        }
-        for(auto i:sc){
-            if(i==x) vecd.push_back(x);
+    set<int> A, B;
+
+    readSet(A);
+
+    string blank;
+    getline(cin, blank);
+
+    readSet(B);
+
+    set<int> C = A;
+    C.insert(B.begin(), B.end());
+
+    set<int> D;
+    for (int x : A) {
+        if (B.count(x)) {
+            D.insert(x);
         }
     }
 
-    for (auto i : vecc) cout << i << " ";
+    for (int x : C) {
+        cout << x << " ";
+    }
     cout << "\n\n";
-    for (auto i : vecd) cout << i << " ";
+
+    for (int x : D) {
+        cout << x << " ";
+    }
+    cout << "\n";
 
     return 0;
 }
