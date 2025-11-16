@@ -1,13 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int MAXN = 1e6;
-long long n=1, a[MAXN+5];
+#define ll long long
+vector<ll> a;
+long long t,n;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0); cout.tie(0);
-    while(cin>>a[++n]);
-    n--;
+    while(cin>>t) a.push_back(t);
+    n=a.size();
     if(n<3){
         cout << 0;
         return 0;
