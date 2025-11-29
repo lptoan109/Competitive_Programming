@@ -12,13 +12,17 @@ int main() {
     ll w, h, n;
     cin >> w >> h >> n;
 
-    ll l = max(w,h), r = w*h*n, k;
-    while (left <= right) {
-        k = l+(r-l)/2;
-        if(k*k<=(k/w)*(k/h))
+    ll l = max(w,h), r = max(w,h)*n, k;
+    while (l <= r) {
+        ll m = l+(r-l)/2;
+        if((m/w)*(m/h)>=n){
+            k = m;
+            r = m-1;
+        }
+        else l = m+1;
     }
 
-    cout << ans << "\n";
+    cout << k;
 
     return 0;
 }
