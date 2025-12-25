@@ -1,24 +1,36 @@
 #include<bits/stdc++.h>
 using namespace std;
-vector<pair <string,double>> cap;
-void nhap(int n){
-    for(int i = 0; i<n; ++i){
-        string t;
-        getline(cin, t);
-        int sl = t.size(), vt = t.rfind('-',sl-1);
-        string ten = t.substr(0,vt-1), die = t.substr(vt+2,sl-(vt+2));
-        double diem = stod(die);
-        cap.push_back(make_pair(ten,diem));
-    }
+bool compare(pair<string,double> a, pair<string,double>b){
+    if(a.second==b.second) return a.first < b.first;
+    return a.second > b.second;
 }
+double trans(string t){
+    int sl = t.size();
+    double so = t[0]-'0';
+    for(int i = 1; i<sl; ++i){
+        so*=10+(t[i]-'0');
+    }
+    return so;
+}
+vector<pair<string, double>> ds;
+string ten, tam;
+double diem;
+int n;
 int main(){
-    int n;
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
     cin >> n;
-    cin.ignore();
-    nhap(n);
-    sort(cap.begin(), cap.end(), [](const pair<string,double> a, const pair<string,double> b){
-        if(a.second==b.second) return a.first < b.first;
-        return a.second>b.second;
-    });
-    for(int i = 0; i<n; ++i) cout << cap[i].first << " - " << cap[i].second << "\n";
+    while(n--){
+        getline(cin,tam);
+        int slktcl = ten.find('-'), sl = tam.size();
+        ten = tam.substr(0,slktcl-1);
+        string diemt = tam.substr(slktcl+1,sl-slktcl-1);
+        diem = trans(diemt);
+        cout << ten<< " " << diem << "\n";
+        ds.push_back(make_pair(ten,diem));
+    }
+    sort(ds.begin(),ds.end(),compare);
+    for(auto &i:ds){
+        cout << i.first << " - " << i.second << "\n";
+    }
 }
