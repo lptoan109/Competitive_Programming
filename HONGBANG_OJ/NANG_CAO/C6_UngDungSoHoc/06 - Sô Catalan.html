@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci & Catalan: Lý thuyết và Ứng dụng</title>
+    <style>
+        :root {
+            /* Palette màu sắc phân biệt */
+            --color-blue: #0ea5e9;    /* Fibonacci */
+            --color-orange: #f97316;  /* Ứng dụng Fibo */
+            --color-purple: #8b5cf6;  /* Catalan */
+            --color-pink: #ec4899;    /* Ứng dụng Catalan */
+            
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* --- TABS STYLE --- */
+        .tabs {
+            display: flex;
+            background-color: #e2e8f0;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            background: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--color-blue);
+            border-top: 4px solid var(--color-blue);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC STYLE --- */
+        .main-title {
+            text-align: center;
+            color: #eec862;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            color: var(--text-color);
+        }
+
+        .step-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Border colors */
+        .border-blue { border-left: 6px solid var(--color-blue); }
+        .border-orange { border-left: 6px solid var(--color-orange); }
+        .border-purple { border-left: 6px solid var(--color-purple); }
+        .border-pink { border-left: 6px solid var(--color-pink); }
+
+        .step-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: var(--color-blue); }
+        .bg-orange { background-color: var(--color-orange); }
+        .bg-purple { background-color: var(--color-purple); }
+        .bg-pink { background-color: var(--color-pink); }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .text-blue { color: var(--color-blue); }
+        .text-orange { color: var(--color-orange); }
+        .text-purple { color: var(--color-purple); }
+        .text-pink { color: var(--color-pink); }
+
+        .math-formula {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #334155;
+            border: 1px dashed #94a3b8;
+            margin: 15px 0;
+        }
+
+        .app-list li { margin-bottom: 8px; }
+        .highlight { font-weight: bold; color: #b91c1c; }
+
+        /* --- SIMULATION STYLE --- */
+        .control-panel {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        input[type="number"] { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 80px;} 
+        select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 200px; }
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-blue); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        button.step-btn { background-color: #22c55e; } /* Green for step */
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        .var-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .var-box {
+            background: #1e293b; color: #fff; padding: 15px;
+            border-radius: 8px; text-align: center;
+        }
+        .var-label { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        .var-value { font-size: 1.5rem; font-weight: bold; font-family: 'Courier New', monospace; color: #38bdf8; }
+        .var-value.highlight { color: #facc15; animation: pulse 0.5s; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        .log-area {
+            background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 15px;
+            border-radius: 8px; height: 300px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .log-fibo { color: var(--color-blue); }
+        .log-cata { color: var(--color-purple); font-weight: bold; }
+
+        /* Header & Footer */
+        .header {
+            background-color: #042863;
+            color: #d8ac7a;
+            padding: 5px 0px;
+            margin-top: 0;
+            border-top: 4px solid #3b82f6;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+        .teacher-footer {
+            background-color: #042863;
+            color: #f1f5f9;
+            padding: 10px 5px;
+            margin-top: 0;
+            border-top: 4px solid #3b82f6;
+            text-align: center;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            color: #73a9ec; 
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            font-size: 1rem;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+        .footer-item:hover { background-color: #334155; color: #fff; transform: translateY(-2px); }
+        .icon { font-size: 1.2rem; }  
+    </style>
+    <script>
+        MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Số Fibonacci & Số Catalan</h1>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('infographic')">📚 Infographic: Lý thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô phỏng</button>
+    </div>
+
+    <div id="infographic" class="tab-content active">
+
+        <h2 class="section-header text-blue">1. Dãy số Fibonacci ($F_n$)</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Khái niệm & Công thức</span>
+            <div class="step-title text-blue">Quy luật Tự nhiên</div>
+            <div class="step-content">
+                <p>Fibonacci là dãy số bắt đầu bằng 0 và 1, các số sau bằng tổng 2 số liền trước.</p>
+                <div class="math-formula">
+                    $F_0 = 0, \quad F_1 = 1$<br>
+                    $F_n = F_{n-1} + F_{n-2} \quad (n \ge 2)$
+                </div>
+                <p>Dãy số: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...</p>
+            </div>
+        </div>
+
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Ứng dụng trong Lập trình</span>
+            <div class="step-title text-orange">Các bài toán điển hình</div>
+            <div class="step-content">
+                <ul class="app-list">
+                    <li><b>Quy hoạch động cơ bản:</b> Tính $F_n$ là bài toán vỡ lòng về đệ quy có nhớ (Memoization).</li>
+                    <li><b>Bài toán Bậc thang:</b> Có $N$ bậc thang, mỗi lần bước 1 hoặc 2 bậc. Số cách leo lên đỉnh chính là $F_{N+1}$.</li>
+                    <li><b>Lát gạch 2xN:</b> Số cách lát kín hình chữ nhật $2 \times N$ bằng các viên gạch $2 \times 1$ là $F_{N+1}$.</li>
+                    <li><b>Tìm kiếm Fibonacci:</b> Một kỹ thuật tìm kiếm trong mảng đã sắp xếp (chia đoạn theo tỉ lệ Fibonacci) tương tự Binary Search.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-header text-purple">2. Số Catalan ($C_n$)</h2>
+        <div class="step-card border-purple">
+            <span class="step-badge bg-purple">Khái niệm & Công thức</span>
+            <div class="step-title text-purple">Dãy số tổ hợp</div>
+            <div class="step-content">
+                <p>Số Catalan xuất hiện trong các bài toán đếm tổ hợp liên quan đến cấu trúc đệ quy.</p>
+                <div class="math-formula">
+                    $C_n = \frac{1}{n+1}\binom{2n}{n} = \frac{(2n)!}{(n+1)!n!}$
+                </div>
+                <p>Hoặc công thức truy hồi:<br>
+                $C_0 = 1, \quad C_{n+1} = \sum_{i=0}^{n} C_i C_{n-i}$
+                </p>
+                <p>Dãy số: 1, 1, 2, 5, 14, 42, 132, 429, ...</p>
+            </div>
+        </div>
+
+        <div class="step-card border-pink">
+            <span class="step-badge bg-pink">Ứng dụng trong Lập trình</span>
+            <div class="step-title text-pink">Các bài toán đếm cấu trúc</div>
+            <div class="step-content">
+                <ul class="app-list">
+                    <li><b>Dãy ngoặc đúng:</b> Số cách sắp xếp $N$ cặp ngoặc đơn `()` sao cho đúng quy tắc là $C_N$. Ví dụ N=3 có `((()))`, `()(())`, `(())()`, `()()()`, `(()())`.</li>
+                    <li><b>Cây nhị phân tìm kiếm (BST):</b> Số cây BST khác nhau có thể tạo từ $N$ nút giá trị khác nhau là $C_N$.</li>
+                    <li><b>Chia đa giác:</b> Số cách chia đa giác lồi $N+2$ cạnh thành các tam giác bằng các đường chéo không cắt nhau là $C_N$.</li>
+                    <li><b>Đường đi trên lưới:</b> Số đường đi từ (0,0) đến (N,N) trên lưới vuông chỉ đi sang phải hoặc lên trên và không vượt quá đường chéo chính ($\le x$) là $C_N$.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <h2 style="margin-top:0; color:var(--color-blue)">Mô phỏng Sinh Dãy số</h2>
+        
+        <div class="control-panel">
+            <label><b>Chọn loại số:</b></label>
+            <select id="algoSelect" onchange="resetSim()">
+                <option value="fibo">Dãy Fibonacci (Cộng dồn)</option>
+                <option value="catalan">Số Catalan (Truy hồi nhân)</option>
+            </select>
+
+            <label><b>Nhập N (Số phần tử):</b></label>
+            <input type="number" id="inpN" value="10" min="1" max="50">
+            
+            <button class="action-btn" onclick="startSimulation()">▶ Bắt đầu lại</button>
+            <button class="action-btn step-btn" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+
+        <div class="var-dashboard">
+            <div class="var-box">
+                <div class="var-label">Chỉ số (i)</div>
+                <div class="var-value" id="val_idx">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Giá trị trước</div>
+                <div class="var-value" id="val_prev">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Công thức áp dụng</div>
+                <div class="var-value" id="val_formula" style="font-size: 1rem;">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Kết quả hiện tại</div>
+                <div class="var-value highlight" id="val_res">-</div>
+            </div>
+        </div>
+
+        <div class="log-area" id="logArea">
+            <div class="log-entry">Chọn thuật toán và nhấn "Bắt đầu lại".</div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        
+        <div class="footer-info">
+            <span class="footer-item">
+                <span class="icon">📞</span> 
+                <b>090378159</b>
+            </span>
+
+            <a href="http://xemdiem.luyenthichuyentin10.edu.vn:8081/login" target="_blank" class="footer-item">
+                <span class="icon">🌐</span> 
+                <b>luyenthichuyentin10.edu.vn</b>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- JS Logic ---
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function log(message, type = '') {
+        const area = document.getElementById('logArea');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = message;
+        area.appendChild(entry);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function updateVars(idx, prev, formula, res) {
+        if(idx !== null) document.getElementById('val_idx').innerText = idx;
+        if(prev !== null) document.getElementById('val_prev').innerText = prev;
+        if(formula !== null) document.getElementById('val_formula').innerText = formula;
+        if(res !== null) {
+            const el = document.getElementById('val_res');
+            el.innerText = res;
+            el.classList.remove('highlight');
+            void el.offsetWidth; // Trigger reflow
+            el.classList.add('highlight');
+        }
+    }
+
+    // --- Generators ---
+
+    // 1. Fibonacci Generator
+    function* fiboGenerator(n) {
+        let f0 = 0, f1 = 1;
+        log(`Bắt đầu sinh ${n} số Fibonacci đầu tiên.`, 'log-fibo');
+        
+        // F0
+        updateVars(0, '-', 'F(0) = 0', 0);
+        yield { msg: "Bước 0: F(0) = 0 (Khởi tạo)" };
+
+        if(n >= 1) {
+            // F1
+            updateVars(1, 'F(0)=0', 'F(1) = 1', 1);
+            yield { msg: "Bước 1: F(1) = 1 (Khởi tạo)" };
+        }
+
+        for(let i = 2; i <= n; i++) {
+            let fn = f0 + f1;
+            let formula = `${f1} + ${f0}`;
+            updateVars(i, `F(${i-1})=${f1}, F(${i-2})=${f0}`, `F(${i}) = F(${i-1}) + F(${i-2})`, fn);
+            
+            // Format số có dấu chấm động nếu lớn
+            yield { msg: `Bước ${i}: F(${i}) = ${f1} + ${f0} = <b>${fn.toLocaleString()}</b>` };
+            
+            // Cập nhật
+            f0 = f1;
+            f1 = fn;
+            
+            if (fn > Number.MAX_SAFE_INTEGER) {
+                log("⚠️ Số quá lớn, dừng mô phỏng để tránh sai số.", 'log-fibo');
+                return;
+            }
+        }
+        log("✅ Hoàn tất dãy Fibonacci.", 'log-fibo');
+    }
+
+    // 2. Catalan Generator
+    // Sử dụng công thức truy hồi tối ưu để tính: C(n) = C(n-1) * (4n - 2) / (n + 1)
+    function* catalanGenerator(n) {
+        let c = 1; // C0
+        log(`Bắt đầu sinh ${n} số Catalan đầu tiên.`, 'log-cata');
+        log(`Sử dụng công thức truy hồi: C(n) = C(n-1) * (4n - 2) / (n + 1)`, 'log-cata');
+
+        // C0
+        updateVars(0, '-', 'C(0) = 1', 1);
+        yield { msg: "Bước 0: C(0) = 1 (Khởi tạo)" };
+
+        for(let i = 1; i <= n; i++) {
+            let oldC = c;
+            // Tính toán theo BigInt để tránh tràn số sớm, nhưng hiển thị Number cho gọn nếu nhỏ
+            // Ở đây demo JS number thường
+            c = c * (4 * i - 2) / (i + 1);
+            
+            let formulaStr = `${oldC} * (${4*i - 2}) / ${i+1}`;
+            updateVars(i, `C(${i-1})=${oldC}`, `C(n) = C(n-1)*(4n-2)/(n+1)`, c);
+            
+            yield { msg: `Bước ${i}: C(${i}) = ${oldC} × ${4*i - 2} ÷ ${i+1} = <b>${c.toLocaleString()}</b>` };
+            
+            if (c > Number.MAX_SAFE_INTEGER) {
+                log("⚠️ Số quá lớn, dừng mô phỏng.", 'log-cata');
+                return;
+            }
+        }
+        log("✅ Hoàn tất dãy Catalan.", 'log-cata');
+    }
+
+    // --- Controller ---
+    let simulator = null;
+
+    function resetSim() {
+        document.getElementById('btnStep').disabled = true;
+        document.getElementById('logArea').innerHTML = '<div class="log-entry">Nhấn "Bắt đầu lại" để chạy.</div>';
+        updateVars('-', '-', '-', '-');
+    }
+
+    function startSimulation() {
+        const type = document.getElementById('algoSelect').value;
+        const n = parseInt(document.getElementById('inpN').value);
+
+        if (n < 0 || isNaN(n)) {
+            alert("N không hợp lệ");
+            return;
+        }
+
+        document.getElementById('logArea').innerHTML = '';
+        document.getElementById('btnStep').disabled = false;
+        
+        if (type === 'fibo') {
+            simulator = fiboGenerator(n);
+        } else {
+            simulator = catalanGenerator(n);
+        }
+        
+        log(`Đã khởi tạo chế độ: ${type === 'fibo' ? 'Fibonacci' : 'Catalan'}`, 'log-info');
+    }
+
+    function nextStep() {
+        if (!simulator) return;
+        const result = simulator.next();
+        
+        if (result.value && result.value.msg) {
+            log(result.value.msg, document.getElementById('algoSelect').value === 'fibo' ? 'log-fibo' : 'log-cata');
+        }
+
+        if (result.done) {
+            document.getElementById('btnStep').disabled = true;
+        }
+    }
+    
+    // Mặc định
+    document.getElementById('infographic').classList.add('active');
+</script>
+
+</body>
+</html>

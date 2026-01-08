@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lý thuyết Đồng dư & Nghịch đảo Modulo</title>
+    <style>
+        :root {
+            --color-blue: #0ea5e9;    /* Định nghĩa */
+            --color-orange: #f97316;  /* Phép toán */
+            --color-purple: #8b5cf6;  /* Lý thuyết Nghịch đảo */
+            --color-green: #22c55e;   /* Phương pháp tính */
+            
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* --- TABS --- */
+        .tabs {
+            display: flex;
+            background-color: #e2e8f0;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            background: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--color-blue);
+            border-top: 4px solid var(--color-blue);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC --- */
+        .main-title {
+            text-align: center;
+            color: #eec862;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            color: var(--text-color);
+        }
+
+        .step-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .border-blue { border-left: 6px solid var(--color-blue); }
+        .border-orange { border-left: 6px solid var(--color-orange); }
+        .border-purple { border-left: 6px solid var(--color-purple); }
+        .border-green { border-left: 6px solid var(--color-green); }
+
+        .step-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: var(--color-blue); }
+        .bg-orange { background-color: var(--color-orange); }
+        .bg-purple { background-color: var(--color-purple); }
+        .bg-green { background-color: var(--color-green); }
+
+        .step-title { font-size: 1.3rem; font-weight: 700; margin-top: 5px; margin-bottom: 15px; }
+        .text-blue { color: var(--color-blue); }
+        .text-orange { color: var(--color-orange); }
+        .text-purple { color: var(--color-purple); }
+        .text-green { color: var(--color-green); }
+
+        .math-formula {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #334155;
+            border: 1px dashed #94a3b8;
+            margin: 15px 0;
+        }
+
+        /* Styles for breakdown table */
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .breakdown-table th, .breakdown-table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: center;
+        }
+        .breakdown-table th { background-color: #ffedd5; color: #c2410c; }
+        
+        .code-block {
+            background-color: var(--code-bg);
+            color: #e9ebee;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* --- SIMULATION --- */
+        .control-panel {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        input[type="number"] { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100px;} 
+        select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; min-width: 200px; }
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-blue); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        button.step-btn { background-color: #22c55e; }
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        .var-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .var-box {
+            background: #1e293b; color: #fff; padding: 15px;
+            border-radius: 8px; text-align: center;
+        }
+        .var-label { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        .var-value { font-size: 1.4rem; font-weight: bold; font-family: 'Courier New', monospace; color: #38bdf8; }
+        .var-value.highlight { color: #facc15; animation: pulse 0.5s; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        .log-area {
+            background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 15px;
+            border-radius: 8px; height: 300px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .log-info { color: #334155; }
+        .log-success { color: #16a34a; font-weight: bold; }
+        .log-err { color: #dc2626; font-weight: bold; }
+
+        /* Header & Footer */
+        .header {
+            background-color: #042863; color: #d8ac7a; padding: 5px 0px;
+            margin-top: 0; border-top: 4px solid #3b82f6; text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+        .teacher-footer {
+            background-color: #042863; color: #f1f5f9; padding: 10px 5px;
+            margin-top: 0; border-top: 4px solid #3b82f6; text-align: center;
+            border-radius: 0 0 12px 12px;
+        }
+        .footer-title { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; color: #73a9ec; }
+        .footer-info { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 1rem; }
+        .footer-item { display: flex; align-items: center; gap: 8px; color: #cbd5e1; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 6px; }
+        .footer-item:hover { background-color: #334155; color: #fff; transform: translateY(-2px); }
+        .icon { font-size: 1.2rem; }  
+    </style>
+    <script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Lý thuyết Đồng dư & Nghịch đảo Modulo</h1>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('infographic')">📚 Infographic: Lý thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô phỏng: Tính toán</button>
+    </div>
+
+    <div id="infographic" class="tab-content active">
+
+        <h2 class="section-header text-blue">1. Định nghĩa & Tính chất cơ bản</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Định nghĩa</span>
+            <div class="step-content">
+                <p>Hai số nguyên $a$ và $b$ được gọi là đồng dư theo mô-đun $m$ nếu chúng có <b>cùng số dư</b> khi chia cho $m$.</p>
+                <div class="math-formula">$a \equiv b \pmod m \iff (a - b)$ $\vdots$ $m$</div>
+                <p><b>Ví dụ:</b> $18 \equiv 3 \pmod 5$ vì $18 \div 5$ dư 3 và $3 \div 5$ cũng dư 3 (hoặc $18 - 3 = 15$ $\vdots$ $5$).</p>
+            </div>
+        </div>
+
+        <h2 class="section-header text-orange">2. Các phép toán Đồng dư</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Ứng dụng xử lý số lớn</span>
+            <div class="step-content">
+                <p>Quy tắc quan trọng: <b>"Số dư của một tổng / hiệu / tích bằng tổng / hiệu / tích của các số dư"</b>.</p>
+                <div class="math-formula">
+                    $(A + B)$ $\%$ $M = ((A$ $\%$ $M) + (B$ $\%$ $M))$ $\%$ $M$<br>
+                    $(A - B)$ $\%$ $M = ((A$ $\%$ $M) - (B$ $\%$ $M) + M)$ $\%$ $M$<br>
+                    $(A \times B)$ $\%$ $M = ((A$ $\%$ $M) \times (B$ $\%$ $M))$ $\%$ $M$
+                </div>
+                
+                <p><b>Ví dụ phân tích:</b> Tính $(13 \times 11 \times 8)$ $\%$ $5$.</p>
+                <table class="breakdown-table">
+                    <tr>
+                        <th>Bước 1: Lấy dư từng số</th>
+                        <th>Bước 2: Nhân các số dư</th>
+                        <th>Bước 3: Lấy dư kết quả</th>
+                    </tr>
+                    <tr>
+                        <td>$13$ $\%$ $5 = \mathbf{3}$<br>$11$ $\%$ $5 = \mathbf{1}$<br>$8$ $\%$ $5 = \mathbf{3}$</td>
+                        <td>$3 \times 1 \times 3 = \mathbf{9}$</td>
+                        <td>$9$ $\%$ $5 = \mathbf{4}$</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <h2 class="section-header text-purple">3. Nghịch đảo Modulo: Bản chất & Ứng dụng</h2>
+        
+        <div class="step-card border-purple">
+            <span class="step-badge bg-purple">1. Tại sao cần? (Vấn đề của phép chia)</span>
+            <div class="step-content">
+                <p>Trong môi trường đồng dư, phép <b>Cộng, Trừ, Nhân</b> hoạt động tốt với tính chất tách nhỏ số dư. Tuy nhiên, <b>Phép chia thì KHÔNG</b>.</p>
+                <div class="math-formula" style="background-color: #fee2e2; border-color: #ef4444;">
+                    Sai lầm: $(A / B)$ $\%$ $M \neq ((A$ $\%$ $M) / (B$ $\%$ $M))$ $\%$ $M$
+                </div>
+                <p><b>Ví dụ minh họa:</b> Tính $(12 \div 4) \pmod 5$.</p>
+                <ul>
+                    <li>Kết quả đúng: $12 \div 4 = 3$. Mà $3 \pmod 5 = \mathbf{3}$.</li>
+                    <li>Nếu áp dụng công thức sai: $(12$ $\%$ $5) \div (4$ $\%$ $5) = 2 \div 4 = 0.5$ (Vô lý trong số nguyên).</li>
+                </ul>
+                <p>=> Do đó, ta không thể chia trực tiếp. Ta cần một phương pháp khác: <b>Nghịch đảo Modulo</b>.</p>
+            </div>
+        </div>
+
+        <div class="step-card border-purple">
+            <span class="step-badge bg-purple">2. Nghịch đảo Modulo là gì? (Giải pháp)</span>
+            <div class="step-content">
+                <p>Phép chia cho $B$ thực chất là nhân với nghịch đảo của $B$ ($B^{-1}$). Trong modulo, ta tìm một số nguyên $X$ đóng vai trò là $B^{-1}$.</p>
+                <div class="math-formula">$B \cdot X \equiv 1 \pmod M$</div>
+                <p><b>Ví dụ:</b> Tìm nghịch đảo của 4 trong mod 5.</p>
+                <ul>
+                    <li>Ta thấy $4 \times 4 = 16$. Mà $16$ chia $5$ dư $1$.</li>
+                    <li>Vậy <b>4</b> chính là nghịch đảo của 4.</li>
+                    <li>Quay lại bài toán trên: Thay vì chia 4, ta nhân 4: $(12 \times 4)$ $\%$ $5 = 48$ $\%$ $5 = \mathbf{3}$ (Đúng!).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card border-purple">
+            <span class="step-badge bg-purple">3. Khi nào cần tính?</span>
+            <div class="step-content">
+                <ul style="list-style-type: disc; padding-left: 20px;">
+                    <li><b>Tính Tổ hợp $nCk$:</b> Công thức $n! / (k!(n-k)!)$. Vì có phép chia cho giai thừa, ta phải nhân với nghịch đảo của mẫu số.</li>
+                    <li><b>Giải phương trình đồng dư:</b> Tìm x trong $A \cdot x \equiv B \pmod M \Rightarrow x \equiv B \cdot A^{-1} \pmod M$.</li>
+                    <li><b>Mật mã học (RSA):</b> Tính toán khóa bảo mật dựa trên nghịch đảo modulo.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card border-purple">
+            <span class="step-badge bg-purple">4. Điều kiện tồn tại</span>
+            <div class="step-content">
+                <p>Nghịch đảo modulo của $A$ theo mô-đun $M$ chỉ tồn tại khi và chỉ khi:</p>
+                <div class="math-formula">$\gcd(A, M) = 1$</div>
+                <p>Tức là $A$ và $M$ phải là hai số <b>nguyên tố cùng nhau</b>. Nếu không, không thể thực hiện phép chia.</p>
+            </div>
+        </div>
+
+        <h2 class="section-header text-green">4. Hai phương pháp tìm Nghịch đảo</h2>
+        
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Cách 1: Euclid mở rộng (Tổng quát)</span>
+            <div class="step-title text-green">Áp dụng cho mọi trường hợp gcd(a, m) = 1</div>
+            <div class="step-content">
+                <p>Dùng khi $M$ không nhất thiết phải là số nguyên tố.</p>
+                <div class="code-block">
+ Bước 1: Xây dựng hàm tìm ước chung mở rộng để tìm cặp giá trị x, y và gcd(a, m)
+    int ExtGCD(int a, int m, int &x, int &y)
+        Nếu m bằng 0
+            x = 1
+            y = 0
+            return a
+        int x1, y1
+        int gcd = ExtGCD(m, a % m, x1, y1)
+        x = y1
+        y = x1 - (a / m) * y1
+        return gcd
+ Bước 2: Xây dựng hàm tìm nghịch đảo modulo
+    int InvMod(int a, int m)
+        int x, y
+        int gcd = ExtGCD(a, m, x, y)
+        nếu gcd khác 1 return -1;
+        return (x % m + m) % m
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Cách 2: Định lý Fermat nhỏ</span>
+            <div class="step-title text-green">Chỉ dùng khi m là SỐ NGUYÊN TỐ</div>
+            <div class="step-content">
+                <p>Nếu $m$ là số nguyên tố, nghịch đảo của $a$ là $a^{m-2} \pmod m$.</p>
+                <p><b>Cách tính:</b> Sử dụng thuật toán <b>Lũy thừa nhanh (Binary Exponentiation)</b>.</p>
+            </div>
+            <div class="code-block">
+ Bước 1: kiểm tra gcd(a, m) nếu bằng 1 qua bước 2, nếu khác 1 không tính được nghịch đảo modulo
+ Bước 2: Xây dựng hàm tính lũy thừa nhanh của $a^{m-2}%$ $\%$ $m$
+    long long PowMod(long long a, long long b, long long m)
+        long long res = 1
+        a = a % m
+        Trong khi b > 0 thì lặp lại:
+            Nếu (b % 2 == 1)
+                res = (res * a) % m
+            a = (a * a) % m
+            b = b / 2
+        return res
+    long long InvModFermat(long long a, long long m)
+        Nếu (__gcd(a, m) != 1) return -1
+        return PowMod(a, m - 2, m)
+                </div>
+            </div>
+        </div>
+        </div>
+        
+
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <h2 style="margin-top:0; color:var(--color-blue)">Mô phỏng Tính toán</h2>
+        
+        <div class="control-panel">
+            <label><b>Chế độ:</b></label>
+            <select id="simMode" onchange="updateInputs()">
+                <option value="basic">Phép toán cơ bản (+, -, *)</option>
+                <option value="euclid">Nghịch đảo (Euclid mở rộng)</option>
+                <option value="fermat">Nghịch đảo (Fermat nhỏ)</option>
+            </select>
+
+            <div id="inputGroup">
+                <label>A:</label> <input type="number" id="inpA" value="13">
+                <label id="lblB">B:</label> <input type="number" id="inpB" value="11">
+                <label>Mod (m):</label> <input type="number" id="inpM" value="5">
+            </div>
+            
+            <button class="action-btn" onclick="startSim()">▶ Tính toán</button>
+            <button class="action-btn step-btn" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+
+        <div class="var-dashboard">
+            <div class="var-box">
+                <div class="var-label">Biến A</div>
+                <div class="var-value" id="val_a">-</div>
+            </div>
+            <div class="var-box" id="box_b">
+                <div class="var-label">Biến B</div>
+                <div class="var-value" id="val_b">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Modulo (m)</div>
+                <div class="var-value" id="val_m">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Kết quả</div>
+                <div class="var-value highlight" id="val_res">-</div>
+            </div>
+        </div>
+
+        <div class="log-area" id="logArea">
+            <div class="log-entry">Chọn chế độ và nhấn "Tính toán".</div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item"><span class="icon">📞</span> <b>090378159</b></span>
+            <a href="http://xemdiem.luyenthichuyentin10.edu.vn:8081/login" target="_blank" class="footer-item"><span class="icon">🌐</span> <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- JS Logic ---
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function log(msg, type = '') {
+        const area = document.getElementById('logArea');
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerHTML = msg;
+        area.appendChild(div);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function updateVars(a, b, m, res) {
+        if(a !== null) document.getElementById('val_a').innerText = a;
+        if(b !== null) document.getElementById('val_b').innerText = b;
+        if(m !== null) document.getElementById('val_m').innerText = m;
+        if(res !== null) document.getElementById('val_res').innerText = res;
+    }
+
+    function updateInputs() {
+        const mode = document.getElementById('simMode').value;
+        const inpB = document.getElementById('inpB');
+        const lblB = document.getElementById('lblB');
+        const boxB = document.getElementById('box_b');
+
+        if (mode === 'basic') {
+            inpB.style.display = 'inline-block';
+            lblB.style.display = 'inline-block';
+            boxB.style.visibility = 'visible';
+            document.getElementById('inpA').value = 13;
+            document.getElementById('inpB').value = 11;
+            document.getElementById('inpM').value = 5;
+        } else {
+            inpB.style.display = 'none';
+            lblB.style.display = 'none';
+            boxB.style.visibility = 'hidden';
+            document.getElementById('inpA').value = 3; 
+            document.getElementById('inpM').value = 11;
+        }
+    }
+
+    // --- Generators ---
+
+    function* basicSim(a, b, m) {
+        updateVars(a, b, m, '?');
+        
+        let sumStep1 = (a % m + b % m);
+        let sumRes = sumStep1 % m;
+        yield { msg: `<b>Phép Cộng (A + B) % M:</b><br>(${a}%${m} + ${b}%${m}) % ${m} = (${a%m} + ${b%m}) % ${m} = ${sumStep1} % ${m} = <b>${sumRes}</b>` };
+
+        let subStep1 = (a % m - b % m);
+        let subStep2 = (subStep1 + m) % m; 
+        yield { msg: `<b>Phép Trừ (A - B) % M:</b><br>(${a}%${m} - ${b}%${m}) % ${m} = (${a%m} - ${b%m}) % ${m} = ${subStep1} % ${m}` };
+        if (subStep1 < 0) {
+            yield { msg: `⚠️ Kết quả âm (${subStep1}), cần cộng thêm M:<br>(${subStep1} + ${m}) % ${m} = <b>${subStep2}</b>`, type: 'log-err' };
+        } else {
+            yield { msg: `Kết quả dương: <b>${subStep2}</b>`, type: 'log-success' };
+        }
+
+        let mulStep1 = BigInt(a % m) * BigInt(b % m);
+        let mulRes = Number(mulStep1 % BigInt(m));
+        yield { msg: `<b>Phép Nhân (A * B) % M:</b><br>(${a}%${m} * ${b}%${m}) % ${m} = (${a%m} * ${b%m}) % ${m} = ${mulStep1} % ${m} = <b>${mulRes}</b>` };
+        
+        updateVars(a, b, m, 'Xong');
+    }
+
+    function* euclidSim(a, m) {
+        updateVars(a, '-', m, '?');
+        log(`Tìm nghịch đảo của ${a} mod ${m} bằng Euclid mở rộng.`);
+        log(`Mục tiêu: Tìm x sao cho ${a}x + ${m}y = gcd(${a}, ${m})`);
+
+        let r0 = a, r1 = m;
+        let x0 = 1, x1 = 0;
+        let y0 = 0, y1 = 1;
+
+        yield { msg: `Khởi tạo: r0=${r0}, r1=${r1}, x0=${x0}, x1=${x1}` };
+
+        while (r1 > 0) {
+            let q = Math.floor(r0 / r1);
+            let nextR = r0 % r1;
+            let nextX = x0 - q * x1;
+            let nextY = y0 - q * y1;
+
+            yield { msg: `${r0} = ${q}*${r1} + ${nextR} <br> -> Cập nhật: x = ${x0} - ${q}*${x1} = ${nextX}` };
+
+            r0 = r1; r1 = nextR;
+            x0 = x1; x1 = nextX;
+            y0 = y1; y1 = nextY;
+        }
+
+        if (r0 !== 1) {
+            yield { msg: `❌ GCD(${a}, ${m}) = ${r0} ≠ 1. Không tồn tại nghịch đảo!`, type: 'log-err' };
+            updateVars(a, '-', m, 'None');
+        } else {
+            let res = (x0 % m + m) % m;
+            yield { msg: `✅ GCD = 1. Tìm được x = ${x0}.` };
+            yield { msg: `Xử lý số âm: (${x0} % ${m} + ${m}) % ${m} = <b>${res}</b>`, type: 'log-success' };
+            updateVars(a, '-', m, res);
+        }
+    }
+
+    function isPrime(n) {
+        if (n < 2) return false;
+        for (let i = 2; i * i <= n; i++) if (n % i === 0) return false;
+        return true;
+    }
+
+    function* fermatSim(a, m) {
+        updateVars(a, '-', m, '?');
+        log(`Tìm nghịch đảo bằng định lý Fermat nhỏ.`);
+        
+        yield { msg: `Bước 1: Kiểm tra m=${m} có phải số nguyên tố?` };
+        if (!isPrime(m)) {
+            yield { msg: `❌ ${m} KHÔNG phải số nguyên tố. Không áp dụng được Fermat!`, type: 'log-err' };
+            updateVars(a, '-', m, 'Error');
+            return;
+        }
+        yield { msg: `✅ ${m} là số nguyên tố.` };
+
+        yield { msg: `Bước 2: Kiểm tra GCD(${a}, ${m})` };
+        if (a % m === 0) {
+            yield { msg: `❌ ${a} chia hết cho ${m}. GCD ≠ 1. Không có nghịch đảo.`, type: 'log-err' };
+            return;
+        }
+
+        let pow = m - 2;
+        yield { msg: `Bước 3: Tính lũy thừa nhanh $a^{m-2} \\pmod m = ${a}^{${pow}} \\pmod ${m}$` };
+
+        let res = 1n;
+        let base = BigInt(a);
+        let exp = BigInt(pow);
+        let mod = BigInt(m);
+        
+        while (exp > 0n) {
+            if (exp % 2n === 1n) {
+                let oldRes = res;
+                res = (res * base) % mod;
+                yield { msg: `Mũ lẻ: res = (${oldRes} * ${base}) % ${mod} = ${res}` };
+            }
+            let oldBase = base;
+            base = (base * base) % mod;
+            yield { msg: `Bình phương base: ${oldBase}^2 % ${mod} = ${base}. Giảm mũ còn ${exp / 2n}` };
+            exp /= 2n;
+        }
+
+        let finalRes = Number(res);
+        yield { msg: `✅ Kết quả nghịch đảo: <b>${finalRes}</b>`, type: 'log-success' };
+        updateVars(a, '-', m, finalRes);
+    }
+
+
+    // --- Controller ---
+    let simulator = null;
+
+    function startSim() {
+        const mode = document.getElementById('simMode').value;
+        const a = parseInt(document.getElementById('inpA').value);
+        const b = parseInt(document.getElementById('inpB').value);
+        const m = parseInt(document.getElementById('inpM').value);
+
+        if (isNaN(a) || isNaN(m)) return alert("Vui lòng nhập số hợp lệ");
+
+        document.getElementById('logArea').innerHTML = '';
+        document.getElementById('btnStep').disabled = false;
+
+        if (mode === 'basic') simulator = basicSim(a, b, m);
+        else if (mode === 'euclid') simulator = euclidSim(a, m);
+        else simulator = fermatSim(a, m);
+
+        log(`Đã khởi tạo chế độ: ${mode.toUpperCase()}`, 'log-info');
+    }
+
+    function nextStep() {
+        if (!simulator) return;
+        const result = simulator.next();
+        if (result.value) log(result.value.msg, result.value.type);
+        if (result.done) document.getElementById('btnStep').disabled = true;
+    }
+    
+    updateInputs();
+</script>
+
+</body>
+</html>

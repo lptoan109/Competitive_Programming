@@ -37,7 +37,7 @@ void PTThuaSoNTsangMPF(long long n){
         if(mangMPF[i]==0) mangMPF[i]=i;
     }
 }
-void demuoc(long long n){
+void demuoc1(long long n){
     long long d;
     d = 0;
     for(long long i = 1; i*i<=n; ++i){
@@ -52,12 +52,24 @@ void demuoc(long long n){
     }
     cout << d << "\n";
 }
-void tonguoc(void){
-    long long t = 0;
+void demuoc2(void){
+    long long t = 1;
     for(auto &i:a){
         t*=(i.second+1);
     }
     cout << t << "\n";
+}
+void tonguoc(void){
+    long long kq = 1;
+    for(auto &i:a){
+        long long p = 1, cs = 1;
+        for(long long j = 0; j<i.second; ++j){
+            p*=i.first;
+            cs+=p;
+        }
+        kq*=cs;
+    }
+    cout << kq << "\n";
 }
 void demvatinhtonguocbanglap(long long n){
     long long d, t;
@@ -85,7 +97,8 @@ int main()
     freopen("PTTSNT.OUT", "w", stdout);
     cin >> n;
     ptthuasont(n);
-    demuoc(n);
+    //demuoc(n);
+    demuoc2();
     tonguoc();
     //demvatinhtonguocbanglap(n);
     return 0;

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô phỏng: Bậc thừa số nguyên tố trong N! (Legendre)</title>
+    <style>
+        :root {
+            /* Palette màu sắc phân biệt các bước */
+            --color-blue: #0ea5e9;    /* Định nghĩa */
+            --color-orange: #f97316;  /* Vét cạn */
+            --color-green: #22c55e;   /* Legendre */
+            --color-purple: #8b5cf6;  /* Code tối ưu */
+            
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* --- TABS STYLE --- */
+        .tabs {
+            display: flex;
+            background-color: #e2e8f0;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            background: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--color-blue);
+            border-top: 4px solid var(--color-blue);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC STYLE --- */
+        .main-title {
+            text-align: center;
+            color: #eec862;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .step-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px 20px 20px 25px;
+            margin-bottom: 35px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Border colors */
+        .step-blue { border-left: 6px solid var(--color-blue); }
+        .step-orange { border-left: 6px solid var(--color-orange); }
+        .step-green { border-left: 6px solid var(--color-green); }
+        .step-purple { border-left: 6px solid var(--color-purple); }
+
+        /* Badges */
+        .step-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: var(--color-blue); }
+        .bg-orange { background-color: var(--color-orange); }
+        .bg-green { background-color: var(--color-green); }
+        .bg-purple { background-color: var(--color-purple); }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .step-blue .step-title { color: var(--color-blue); }
+        .step-orange .step-title { color: var(--color-orange); }
+        .step-green .step-title { color: var(--color-green); }
+        .step-purple .step-title { color: var(--color-purple); }
+
+        .math-formula {
+            background-color: #ecfccb; /* Xanh lá nhạt */
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #15803d;
+            border: 1px dashed var(--color-green);
+            margin: 15px 0;
+        }
+
+        .code-snippet {
+            background-color: var(--code-bg);
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 4px solid var(--color-purple);
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: #e9ebee;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* --- SIMULATION STYLE --- */
+        .control-panel {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        input[type="number"] { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 70px;} 
+        select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-blue); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        button.step-btn { background-color: var(--color-green); }
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        /* Variable Dashboard */
+        .var-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .var-box {
+            background: #1e293b; color: #fff; padding: 15px;
+            border-radius: 8px; text-align: center;
+        }
+        .var-label { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        .var-value { font-size: 1.8rem; font-weight: bold; font-family: 'Courier New', monospace; color: #38bdf8; }
+        .var-value.highlight { color: #facc15; animation: pulse 0.5s; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* Log Area */
+        .log-area {
+            background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 15px;
+            border-radius: 8px; height: 300px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .log-success { color: #16a34a; font-weight: bold; }
+        .log-info { color: #334155; }
+        .header {
+            background-color: #042863; /* Màu nền tối */
+            color: #d8ac7a;            /* Màu chữ sáng */
+            padding: 5px 0px;
+            margin-top: 0;             /* Dính liền với nội dung trên */
+            border-top: 4px solid #3b82f6; /* Viền xanh tạo điểm nhấn */
+            text-align: center;
+            border-radius: 12px 12px 0 0; /* Bo tròn góc dưới nếu nằm trong container */
+        }
+        .teacher-footer {
+            background-color: #042863; /* Màu nền tối */
+            color: #f1f5f9;            /* Màu chữ sáng */
+            padding: 10px 5px;
+            margin-top: 0;             /* Dính liền với nội dung trên */
+            border-top: 4px solid #3b82f6; /* Viền xanh tạo điểm nhấn */
+            text-align: center;
+            border-radius: 0 0 12px 12px; /* Bo tròn góc dưới nếu nằm trong container */
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            color: #73a9ec; 
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap; /* Tự xuống dòng trên điện thoại */
+            font-size: 1rem;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .footer-item:hover {
+            background-color: #334155;
+            color: #fff;
+            transform: translateY(-2px); /* Hiệu ứng nổi nhẹ khi di chuột */
+        }
+
+        /* Icon giả lập bằng Emoji cho nhẹ file */
+        .icon { font-size: 1.2rem; }  
+    </style>
+    <script>
+        MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }   
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bậc của Thừa số Nguyên tố trong N!</h1>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('infographic')">📚 Infographic: Lý thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô phỏng Thuật toán</button>
+    </div>
+
+    <div id="infographic" class="tab-content active">
+
+        <div class="step-card step-blue">
+            <span class="step-badge bg-blue">Bước 1: Định nghĩa</span>
+            <div class="step-title">Bài toán tìm mũ $x$ lớn nhất sao cho $N!$ $\vdots$ $p^x$</div>
+            <div class="step-content">
+                <ul>
+                    <li><b>Định nghĩa:</b> Bậc của thừa số nguyên tố $p$ trong $N!$ là số mũ $x$ lớn nhất để $N!$ chia hết cho $p^x$.</li>
+                    <li><b>Ví dụ:</b> Với $N=10, p=2$.<br>
+                        $10! = 1 \times 2 \times 3 \times 4 \times 5 \times 6 \times 7 \times 8 \times 9 \times 10 = 3,628,800$.<br>
+                        Phân tích: $10! = 2^8 \times 3^4 \times 5^2 \times 7$.<br>
+                        $\rightarrow$ Kết quả cần tìm là <b>8</b>.
+                    </li>
+                    <li><b>Vấn đề:</b> $N$ có thể rất lớn ($10^{14}$), ta không thể tính $N!$ rồi mới chia. Ta cần đếm số lượng thừa số $p$ trực tiếp từ các số $1 \to N$.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card step-orange">
+            <span class="step-badge bg-orange">Bước 2: Phương pháp Vét cạn</span>
+            <div class="step-title">Duyệt bội số (Naive Approach)</div>
+            <div class="step-content">
+                <p>Vì $p$ là <b>số nguyên tố</b> nên tích của $N$ số từ $1$ đến $N$ trong $N!$ chứa bao nhiêu số $p$ thì đó là bậc của $p$ trong $N!$.</p>
+                <p>Ta không cần xét từng số, chỉ cần xét các <b>bội số của $p$</b> ($p, 2p, 3p... \le N$).</p>
+                <ul>
+                    <li>Duyệt $i$ từ $p$ đến $N$ với bước nhảy là $p$.</li>
+                    <li>Với mỗi $i$, ta chia cho $p$ liên tục để xem $i$ đóng góp bao nhiêu thừa số $p$.</li>
+                </ul>
+                <div class="code-block">
+ res = 0;
+ Duyệt i từ p đến N với mỗi bước duyệt là p: (duyệt các bội số của p) 
+    temp = i
+    Trong khi temp chia hết cho p thì lặp lại:
+        res++;
+        temp /= p;
+                </div>
+                <p style="color: #ea580c; margin-top: 10px;"><b>⚠️ Nhược điểm:</b> Vòng lặp chạy $N/p$ lần. Nếu $N=10^{14}, p=2$, vòng lặp chạy $5 \times 10^{13}$ lần $\rightarrow$ <b>Quá thời gian (TLE)</b>.</p>
+            </div>
+        </div>
+
+        <div class="step-card step-green">
+            <span class="step-badge bg-green">Bước 3: Công thức Legendre</span>
+            <div class="step-title">Công thức toán học tối ưu</div>
+            <div class="step-content">
+                <p>Thay vì đếm thủ công, Legendre nhận ra quy luật:</p>
+                <ul>
+                    <li>Số lượng số chia hết cho $p$ trong đoạn $[1, N]$ là $\lfloor N/p \rfloor$.</li>
+                    <li>Số lượng số chia hết cho $p^2$ (đóng góp thêm 1 thừa số nữa) là $\lfloor N/p^2 \rfloor$.</li>
+                    <li>Tương tự với $p^3, p^4...$</li>
+                </ul>
+                <div class="math-formula">
+                    $v_p(n!) = \lfloor \frac{n}{p} \rfloor + \lfloor \frac{n}{p^2} \rfloor + \lfloor \frac{n}{p^3} \rfloor + \dots$
+                </div>
+                <p><b>Ví dụ:</b> $N=35, p=3$.<br>
+                   Kết quả = $\lfloor 35/3 \rfloor + \lfloor 35/9 \rfloor + \lfloor 35/27 \rfloor = 11 + 3 + 1 = 15$.
+                </p>
+            </div>
+        </div>
+
+        <div class="step-card step-purple">
+            <span class="step-badge bg-purple">Bước 4: Cài đặt Tối ưu</span>
+            <div class="step-title">Chuyển công thức thành Code</div>
+            <div class="step-content">
+                <p>Dựa trên công thức Legendre, ta có thuật toán cực nhanh ($O(\log_p N)$):</p>
+                <div class="code-block">
+ res = 0;
+ Duyệt i = p đến N, mỗi bước duyệt i *= p: (i đại diên cho các giá trị p, p^2, p^3, ...) 
+    res += n / i; (Áp dụng công thức legendre)
+                </div>
+                <p><b>Hiệu quả:</b> Với $N=10^{18}$, vòng lặp chỉ chạy khoảng 60 lần. Chạy tức thì!</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <h2 style="margin-top:0; color:var(--color-blue)">Mô phỏng & So sánh Thuật toán</h2>
+        
+        <div class="control-panel">
+            <label><b>Phương pháp:</b></label>
+            <select id="algoSelect" onchange="resetSim()">
+                <option value="naive">1. Vét cạn (Duyệt bội số)</option>
+                <option value="legendre">2. Legendre (Tối ưu)</option>
+            </select>
+
+            <label><b>Nhập N:</b></label>
+            <input type="number" id="inpN" value="35" placeholder="Ví dụ: 35">
+            
+            <label><b>Nhập p (SNT):</b></label>
+            <input type="number" id="inpP" value="3" placeholder="Ví dụ: 3">
+
+            <button class="action-btn" onclick="startSimulation()">▶ Bắt đầu lại</button>
+            <button class="action-btn step-btn" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+
+        <div class="var-dashboard">
+            <div class="var-box">
+                <div class="var-label" id="lbl_var1">Biến chạy i</div>
+                <div class="var-value" id="val_var1">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label" id="lbl_var2">Cộng thêm</div>
+                <div class="var-value" id="val_var2">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Tổng kết quả (res)</div>
+                <div class="var-value success" id="val_res">0</div>
+            </div>
+        </div>
+
+        <div class="log-area" id="logArea">
+            <div class="log-entry log-info">Vui lòng chọn thuật toán và nhấn "Bắt đầu lại".</div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        
+        <div class="footer-info">
+            <span class="footer-item">
+                <span class="icon">📞</span> 
+                <b>090378159</b>
+            </span>
+
+            <a href="http://xemdiem.luyenthichuyentin10.edu.vn:8081/login" target="_blank" class="footer-item">
+                <span class="icon">🌐</span> 
+                <b>luyenthichuyentin10.edu.vn</b>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- JS Logic ---
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function log(message, type = '') {
+        const area = document.getElementById('logArea');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = message;
+        area.appendChild(entry);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function updateVars(v1, v2, res) {
+        if(v1 !== null) document.getElementById('val_var1').innerText = v1;
+        if(v2 !== null) {
+            const el = document.getElementById('val_var2');
+            el.innerText = v2;
+            el.className = 'var-value highlight';
+            setTimeout(() => el.className = 'var-value', 500);
+        }
+        if(res !== null) document.getElementById('val_res').innerText = res;
+    }
+
+    // --- Generators ---
+
+    // 1. Generator Vét Cạn (Mô phỏng code image_85a07f.png)
+    function* naiveGenerator(n, p) {
+        let res = 0;
+        document.getElementById('lbl_var1').innerText = "Đang xét bội số (i)";
+        document.getElementById('lbl_var2').innerText = "Số mũ tìm được";
+        
+        log(`Bắt đầu VÉT CẠN với N=${n}, p=${p}`, 'log-info');
+        log(`Duyệt i từ ${p} đến ${n}, bước nhảy += ${p}`, 'log-info');
+
+        // Code logic: for (ll i = p; i <= n; i += p)
+        for (let i = p; i <= n; i += p) {
+            let temp = i;
+            let count = 0;
+            
+            // Logic: while (temp % p == 0)
+            while (temp % p === 0) {
+                count++;
+                temp = temp / p;
+            }
+
+            res += count;
+            updateVars(i, `+${count}`, res);
+            yield { msg: `Xét i = ${i}: Chia hết cho ${p}^${count}. Cộng thêm ${count}.` };
+        }
+        updateVars('-', 'Xong', res);
+        log(`=== KẾT THÚC: Tổng số mũ là ${res} ===`, 'log-success');
+    }
+
+    // 2. Generator Legendre (Mô phỏng code image_85a349.png)
+    function* legendreGenerator(n, p) {
+        let res = 0;
+        document.getElementById('lbl_var1').innerText = "Lũy thừa (i = p^k)";
+        document.getElementById('lbl_var2').innerText = "Phần nguyên (N/i)";
+
+        log(`Bắt đầu LEGENDRE với N=${n}, p=${p}`, 'log-info');
+        log(`Công thức: res += floor(N / p^k)`, 'log-info');
+
+        // Code logic: for (ll i = p; i <= n; i *= p)
+        // Sử dụng biến k để hiển thị số mũ cho đẹp
+        let k = 1;
+        for (let i = p; i <= n; i *= p) {
+            let term = Math.floor(n / i);
+            res += term;
+            
+            updateVars(`${p}^${k} = ${i}`, `+${term}`, res);
+            yield { msg: `k=${k}: Có ${term} số chia hết cho ${p}^${k} (${i}). Cộng thêm ${term}.` };
+            
+            k++;
+            // Kiểm tra an toàn tràn số JS
+            if (i * p > Number.MAX_SAFE_INTEGER) {
+                 log("Cảnh báo: Số quá lớn vượt giới hạn JS, dừng mô phỏng.", 'log-info');
+                 break;
+            }
+        }
+        updateVars('-', 'Xong', res);
+        log(`=== KẾT THÚC: Tổng số mũ là ${res} ===`, 'log-success');
+    }
+
+    // --- Controller ---
+    let simulator = null;
+
+    function resetSim() {
+        document.getElementById('btnStep').disabled = true;
+        document.getElementById('logArea').innerHTML = '<div class="log-entry log-info">Vui lòng nhấn "Bắt đầu lại".</div>';
+        updateVars('-', '-', 0);
+    }
+
+    function startSimulation() {
+        const type = document.getElementById('algoSelect').value;
+        const n = parseInt(document.getElementById('inpN').value);
+        const p = parseInt(document.getElementById('inpP').value);
+
+        if (p > n) {
+            alert("p phải nhỏ hơn hoặc bằng N");
+            return;
+        }
+        if (p < 2) {
+            alert("p phải là số nguyên tố >= 2");
+            return;
+        }
+
+        document.getElementById('logArea').innerHTML = '';
+        document.getElementById('btnStep').disabled = false;
+        updateVars('-', '-', 0);
+
+        if (type === 'naive') {
+            if (n > 10000) {
+                if(!confirm("N lớn (>10000) chạy vét cạn sẽ rất lâu (lag máy). Bạn có chắc chắn muốn chạy?")) return;
+            }
+            simulator = naiveGenerator(n, p);
+        } else {
+            simulator = legendreGenerator(n, p);
+        }
+        
+        log("Đã khởi tạo. Nhấn 'Bước tiếp theo' để chạy.", 'log-info');
+    }
+
+    function nextStep() {
+        if (!simulator) return;
+        const result = simulator.next();
+        
+        if (result.value) {
+            log(result.value.msg, 'log-info');
+        }
+
+        if (result.done) {
+            document.getElementById('btnStep').disabled = true;
+        }
+    }
+    
+    // Khởi tạo tab mặc định
+    document.getElementById('infographic').classList.add('active');
+</script>
+
+</body>
+</html>

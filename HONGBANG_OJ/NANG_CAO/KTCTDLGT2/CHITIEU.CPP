@@ -39,8 +39,8 @@ int main(){
     freopen("CHITIEU.INP", "r", stdin);
     freopen("CHITIEU.OUT", "w", stdout);
     cin >> n >> k;
-    if(n<=10000) sub1(n,k);
-    else sub2(n,k);
+    //if(n<=10000) sub1(n,k);
+    //else sub2(n,k);
     //sub1(n,k);
-    //sub2(n,k);
+    sub2(n,k);
 }

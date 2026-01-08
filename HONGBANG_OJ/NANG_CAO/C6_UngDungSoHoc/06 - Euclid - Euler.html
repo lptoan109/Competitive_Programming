@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô phỏng Số Hoàn Hảo (Euclid - Euler)</title>
+    <style>
+        :root {
+            /* Bảng màu phân biệt 5 bước */
+            --color-blue: #0ea5e9;    /* Bước 1 */
+            --color-green: #22c55e;   /* Bước 2 */
+            --color-orange: #f97316;  /* Bước 3 (Lý thuyết Mersenne) */
+            --color-pink: #db2777;    /* Bước 4 (Ví dụ - MỚI) */
+            --color-purple: #8b5cf6;  /* Bước 5 (Kết luận) */
+            
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* --- TABS STYLE --- */
+        .tabs {
+            display: flex;
+            background-color: #e2e8f0;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            background: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--color-blue);
+            border-top: 4px solid var(--color-blue);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC STYLE --- */
+        .main-title {
+            text-align: center;
+            color: #eec862;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+        }
+
+        .step-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px 20px 20px 25px;
+            margin-bottom: 40px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Border colors */
+        .step-blue { border-left: 6px solid var(--color-blue); }
+        .step-green { border-left: 6px solid var(--color-green); }
+        .step-orange { border-left: 6px solid var(--color-orange); }
+        .step-pink { border-left: 6px solid var(--color-pink); }
+        .step-purple { border-left: 6px solid var(--color-purple); }
+
+        /* Badges */
+        .step-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: var(--color-blue); }
+        .bg-green { background-color: var(--color-green); }
+        .bg-orange { background-color: var(--color-orange); }
+        .bg-pink { background-color: var(--color-pink); }
+        .bg-purple { background-color: var(--color-purple); }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .step-blue .step-title { color: var(--color-blue); }
+        .step-green .step-title { color: var(--color-green); }
+        .step-orange .step-title { color: var(--color-orange); }
+        .step-pink .step-title { color: var(--color-pink); }
+        .step-purple .step-title { color: var(--color-purple); }
+
+        .math-formula {
+            background-color: #cce2d1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #067206;
+            border: 1px dashed var(--color-green);
+            margin: 15px 0;
+        }
+
+        /* Table Style for Step 4 */
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        .example-table th, .example-table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: center;
+        }
+        .example-table th { background-color: #fce7f3; color: #be185d; } /* Pink theme */
+        .status-ok { color: #16a34a; font-weight: bold; }
+        .status-fail { color: #dc2626; font-weight: bold; }
+
+        /* --- SIMULATION STYLE --- */
+        .control-panel {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input[type="number"] { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 150px; }
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-blue); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        button.step-btn { background-color: var(--color-green); }
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        /* Variable Dashboard */
+        .var-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .var-box {
+            background: #1e293b; color: #fff; padding: 15px;
+            border-radius: 8px; text-align: center;
+        }
+        .var-label { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        .var-value { font-size: 1.5rem; font-weight: bold; font-family: 'Courier New', monospace; color: #38bdf8; }
+        .var-value.highlight { color: #facc15; }
+        .var-value.success { color: #4ade80; }
+
+        /* Log Area */
+        .log-area {
+            background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 15px;
+            border-radius: 8px; height: 300px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .log-success { color: #16a34a; font-weight: bold; background: #dcfce7; padding: 2px 5px; border-radius: 4px;}
+        .log-check { color: #ea580c; }
+        
+        .header {
+            background-color: #042863; /* Màu nền tối */
+            color: #d8ac7a;            /* Màu chữ sáng */
+            padding: 5px 0px;
+            margin-top: 0;             /* Dính liền với nội dung trên */
+            border-top: 4px solid #3b82f6; /* Viền xanh tạo điểm nhấn */
+            text-align: center;
+            border-radius: 12px 12px 0 0; /* Bo tròn góc dưới nếu nằm trong container */
+        }
+        .teacher-footer {
+            background-color: #042863; /* Màu nền tối */
+            color: #f1f5f9;            /* Màu chữ sáng */
+            padding: 10px 5px;
+            margin-top: 0;             /* Dính liền với nội dung trên */
+            border-top: 4px solid #3b82f6; /* Viền xanh tạo điểm nhấn */
+            text-align: center;
+            border-radius: 0 0 12px 12px; /* Bo tròn góc dưới nếu nằm trong container */
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            color: #73a9ec; 
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap; /* Tự xuống dòng trên điện thoại */
+            font-size: 1rem;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .footer-item:hover {
+            background-color: #334155;
+            color: #fff;
+            transform: translateY(-2px); /* Hiệu ứng nổi nhẹ khi di chuột */
+        }
+
+        /* Icon giả lập bằng Emoji cho nhẹ file */
+        .icon { font-size: 1.2rem; }
+        
+    </style>
+    <script>
+        MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Giải thuật tìm số Hoàn Hảo</h1>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('infographic')">📚 Infographic: 5 Bước</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô phỏng Thuật toán</button>
+    </div>
+
+    <div id="infographic" class="tab-content active">
+
+        <div class="step-card step-blue">
+            <span class="step-badge bg-blue">Bước 1</span>
+            <div class="step-title">Bài toán cơ sở</div>
+            <div class="step-content">
+                <ul>
+                    <li><b>Yêu cầu:</b> Tìm các số hoàn hảo (Perfect Number) trong đoạn lớn.</li>
+                    <li><b>Định nghĩa:</b> Số mà tổng các ước thực sự bằng chính nó (VD: 6, 28).</li>
+                    <li><b>Vấn đề vét cạn:</b> Nếu duyệt từng số $1 \to 10^{12}$, độ phức tạp quá lớn, không thể giải quyết.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card step-green">
+            <span class="step-badge bg-green">Bước 2</span>
+            <div class="step-title">Áp dụng Định lý Euclid - Euler</div>
+            <div class="step-content">
+                <p>Ta không tìm trực tiếp. Ta dựa vào định lý đã chứng minh: Mọi số hoàn hảo chẵn đều sinh ra từ công thức:</p>
+                <div class="math-formula">Perfect = 2<sup>p-1</sup> × (2<sup>p</sup> - 1)</div>
+                <p>Trong đó <b>p</b> là một <b>số nguyên tố</b></p>
+                <p>Nhiệm vụ chuyển thành: <b>Đi tìm số nguyên tố p thỏa mãn điều kiện.</b></p>
+            </div>
+        </div>
+        <div class="page-break"></div>
+
+        <div class="step-card step-orange">
+            <span class="step-badge bg-orange">Bước 3 (Quan trọng)</span>
+            <div class="step-title">Số nguyên tố Mersenne & Điều kiện Kiên quyết</div>
+            <div class="step-content">
+                <p>Không phải mọi số nguyên tố $p$ đều tạo ra số hoàn hảo. Chúng ta cần kiểm tra phần <b>$(2^p - 1)$</b>.</p>
+                <ul>
+                    <li>Số dạng $M_p = 2^p - 1$ được gọi là <b>số Mersenne</b>.</li>
+                    <li>Để công thức tạo ra số hoàn hảo, thì $2^p - 1$ <b>BẮT BUỘC phải là số nguyên tố</b>.</li>
+                    <li>Lúc này, $2^p - 1$ được gọi là <b>Số nguyên tố Mersenne</b>.</li>
+                </ul>
+                <p style="background: #fff7ed; padding: 10px; border-left: 4px solid #f97316;">
+                    <b>Ví dụ phản chứng:</b> Với $p = 11$ (là số nguyên tố).<br>
+                    Nhưng $2^{11} - 1 = 2047$. Số này chia hết cho 23 và 89 ($23 \times 89 = 2047$).<br>
+                    ⇒ $2^{11} - 1$ không phải nguyên tố.<br>
+                    ⇒ Không tạo ra số hoàn hảo.
+                </p>
+            </div>
+        </div>
+        <div class="page-break"></div>
+
+        <div class="step-card step-pink">
+            <span class="step-badge bg-pink">Bước 4</span>
+            <div class="step-title">Các ví dụ minh họa</div>
+            <div class="step-content">
+                <p>Bảng kiểm tra các giá trị $p$ nhỏ để tìm ra số hoàn hảo:</p>
+                <table class="example-table">
+                    <thead>
+                        <tr>
+                            <th>p (Nguyên tố)</th>
+                            <th>Mersenne ($M_p = 2^p - 1$)</th>
+                            <th>Kiểm tra $M_p$</th>
+                            <th>Kết quả (Số hoàn hảo)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2</td>
+                            <td>$2^2 - 1 = 3$</td>
+                            <td class="status-ok">Là SNT ✅</td>
+                            <td>$2^1 \times 3 = \mathbf{6}$</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>$2^3 - 1 = 7$</td>
+                            <td class="status-ok">Là SNT ✅</td>
+                            <td>$2^2 \times 7 = \mathbf{28}$</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>$2^5 - 1 = 31$</td>
+                            <td class="status-ok">Là SNT ✅</td>
+                            <td>$2^4 \times 31 = \mathbf{496}$</td>
+                        </tr>
+                        <tr style="background-color: #fef2f2;">
+                            <td>11</td>
+                            <td>$2^{11} - 1 = 2047$</td>
+                            <td class="status-fail">Hợp số (23x89) ❌</td>
+                            <td class="status-fail">Không phải</td>
+                        </tr>
+                         <tr>
+                            <td>13</td>
+                            <td>$2^{13} - 1 = 8191$</td>
+                            <td class="status-ok">Là SNT ✅</td>
+                            <td>$2^{12} \times 8191 = \mathbf{33.550.336}$</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="step-card step-purple">
+            <span class="step-badge bg-purple">Bước 5</span>
+            <div class="step-title">Giới hạn & Kết luận</div>
+            <div class="step-content">
+                <ul>
+                    <li><b>Phạm vi duyệt:</b> Vì số hoàn hảo tăng cực nhanh (theo hàm mũ), trong phạm vi kiểu dữ liệu `long long` ($10^{18}$), ta chỉ cần duyệt $p$ đến khoảng 31 hoặc 61.</li>
+                    <li><b>Tối ưu:</b> Thay vì duyệt hàng tỷ số, thuật toán chỉ cần kiểm tra vài chục số nguyên tố $p$. Tốc độ gần như tức thì.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <h2 style="margin-top:0; color:var(--color-blue)">Mô phỏng (Theo dõi biến số)</h2>
+        
+        <div class="control-panel">
+            <label><b>Giới hạn (N):</b></label>
+            <input type="number" id="limitInput" value="1000000000000" placeholder="Nhập N...">
+            <button class="action-btn" onclick="startSimulation()">▶ Bắt đầu lại</button>
+            <button class="action-btn step-btn" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+
+        <div class="var-dashboard">
+            <div class="var-box">
+                <div class="var-label">p (Đang xét)</div>
+                <div class="var-value" id="disp_p">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Mersenne ($2^p-1$)</div>
+                <div class="var-value" id="disp_mp">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Là SNT Mersenne?</div>
+                <div class="var-value" id="disp_check">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Số hoàn hảo</div>
+                <div class="var-value success" id="disp_res">-</div>
+            </div>
+        </div>
+
+        <div class="log-area" id="logArea">
+            <div class="log-entry">Sẵn sàng. Nhấn "Bắt đầu lại" để chạy mô phỏng.</div>
+        </div>
+    </div>
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        
+        <div class="footer-info">
+            <span class="footer-item">
+                <span class="icon">📞</span> 
+                <b>090378159</b>
+            </span>
+
+            <a href="http://xemdiem.luyenthichuyentin10.edu.vn:8081/login" target="_blank" class="footer-item">
+                <span class="icon">🌐</span> 
+                <b>luyenthichuyentin10.edu.vn</b>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- JS Logic ---
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function log(message, type = '') {
+        const area = document.getElementById('logArea');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = message;
+        area.appendChild(entry);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function updateVars(p, mp, check, res) {
+        if(p !== null) document.getElementById('disp_p').innerText = p;
+        if(mp !== null) document.getElementById('disp_mp').innerText = mp;
+        if(check !== null) {
+            const el = document.getElementById('disp_check');
+            el.innerText = check;
+            el.className = check === 'TRUE' ? 'var-value success' : (check === 'FALSE' ? 'var-value' : 'var-value highlight');
+        }
+        if(res !== null) document.getElementById('disp_res').innerText = res;
+    }
+
+    function isPrime(n) {
+        if (n < 2n) return false;
+        for (let i = 2n; i * i <= n; i++) {
+            if (n % i === 0n) return false;
+        }
+        return true;
+    }
+
+    function* euclidEulerGenerator(limitStr) {
+        const limit = BigInt(limitStr);
+        const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]; 
+        
+        log(`Bắt đầu thuật toán Euclid-Euler.`, 'log-check');
+        updateVars('-', '-', 'WAIT', '-');
+
+        for (let p of primes) {
+            updateVars(p, 'Tính...', '...', '-');
+            yield { msg: `🔹 <b>Xét p = ${p}</b> (Số nguyên tố)`, type: '' };
+
+            let p_big = BigInt(p);
+            let mersenne = (2n ** p_big) - 1n; 
+            
+            updateVars(p, mersenne, 'Checking...', '-');
+            yield { msg: `&nbsp;&nbsp;&nbsp;Tính Mersenne: $2^${p} - 1 = ${mersenne}$. Đang kiểm tra...`, type: 'log-check' };
+
+            if (isPrime(mersenne)) {
+                updateVars(p, mersenne, 'TRUE', 'Tính...');
+                yield { msg: `&nbsp;&nbsp;&nbsp;✅ ${mersenne} LÀ số nguyên tố Mersenne.`, type: 'log-success' };
+
+                let term1 = 2n ** (p_big - 1n);
+                let perfectNum = term1 * mersenne;
+                
+                if (perfectNum <= limit) {
+                    updateVars(p, mersenne, 'TRUE', perfectNum);
+                    yield { msg: `&nbsp;&nbsp;&nbsp;=> <b>PHÁT HIỆN SỐ HOÀN HẢO: ${perfectNum}</b>`, type: 'log-success' };
+                } else {
+                    updateVars(p, mersenne, 'TRUE', '> Limit');
+                    yield { msg: `&nbsp;&nbsp;&nbsp;=> Tìm thấy ${perfectNum} nhưng > giới hạn.`, type: 'log-check' };
+                    return;
+                }
+            } else {
+                updateVars(p, mersenne, 'FALSE', '-');
+                yield { msg: `&nbsp;&nbsp;&nbsp;❌ ${mersenne} là Hợp số (VD: ${p}=11, $2^{11}-1=23 \times 89$). Bỏ qua.`, type: '' };
+            }
+        }
+        log("=== ĐÃ DUYỆT HẾT DANH SÁCH P ===");
+    }
+
+    let simulator = null;
+    function startSimulation() {
+        const limit = document.getElementById('limitInput').value;
+        document.getElementById('logArea').innerHTML = '';
+        document.getElementById('btnStep').disabled = false;
+        simulator = euclidEulerGenerator(limit);
+        log("Đã khởi tạo.", '');
+        updateVars('-', '-', 'Ready', '-');
+    }
+
+    function nextStep() {
+        if (!simulator) return;
+        const result = simulator.next();
+        if (result.value) log(result.value.msg, result.value.type);
+        if (result.done) document.getElementById('btnStep').disabled = true;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô phỏng: Bậc Hợp số trong N!</title>
+    <style>
+        :root {
+            /* Palette màu sắc phân biệt các bước */
+            --color-blue: #0ea5e9;    /* Định nghĩa */
+            --color-orange: #f97316;  /* Phân tích */
+            --color-green: #22c55e;   /* Công thức Min */
+            --color-purple: #8b5cf6;  /* Code tối ưu */
+            
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* --- TABS STYLE --- */
+        .tabs {
+            display: flex;
+            background-color: #e2e8f0;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            background: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--color-blue);
+            border-top: 4px solid var(--color-blue);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC STYLE --- */
+        .main-title {
+            text-align: center;
+            color: #eec862;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .step-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px 20px 20px 25px;
+            margin-bottom: 35px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Border colors */
+        .step-blue { border-left: 6px solid var(--color-blue); }
+        .step-orange { border-left: 6px solid var(--color-orange); }
+        .step-green { border-left: 6px solid var(--color-green); }
+        .step-purple { border-left: 6px solid var(--color-purple); }
+
+        /* Badges */
+        .step-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: var(--color-blue); }
+        .bg-orange { background-color: var(--color-orange); }
+        .bg-green { background-color: var(--color-green); }
+        .bg-purple { background-color: var(--color-purple); }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .step-blue .step-title { color: var(--color-blue); }
+        .step-orange .step-title { color: var(--color-orange); }
+        .step-green .step-title { color: var(--color-green); }
+        .step-purple .step-title { color: var(--color-purple); }
+
+        .math-formula {
+            background-color: #ecfccb; /* Xanh lá nhạt */
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #15803d;
+            border: 1px dashed var(--color-green);
+            margin: 15px 0;
+        }
+
+        .code-snippet {
+            background-color: var(--code-bg);
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 4px solid var(--color-purple);
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: #e9ebee;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* --- SIMULATION STYLE --- */
+        .control-panel {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        input[type="number"] { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 80px;} 
+        select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-blue); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+        button.step-btn { background-color: var(--color-green); }
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        /* Variable Dashboard */
+        .var-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 Cột cho bài toán này */
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .var-box {
+            background: #1e293b; color: #fff; padding: 15px;
+            border-radius: 8px; text-align: center;
+        }
+        .var-label { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        .var-value { font-size: 1.5rem; font-weight: bold; font-family: 'Courier New', monospace; color: #38bdf8; }
+        .var-value.highlight { color: #facc15; animation: pulse 0.5s; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* Log Area */
+        .log-area {
+            background-color: #f1f5f9; border: 1px solid #e2e8f0; padding: 15px;
+            border-radius: 8px; height: 300px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .log-success { color: #16a34a; font-weight: bold; }
+        .log-info { color: #334155; }
+        .header {
+            background-color: #042863;
+            color: #d8ac7a;
+            padding: 5px 0px;
+            margin-top: 0;
+            border-top: 4px solid #3b82f6;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+        .teacher-footer {
+            background-color: #042863;
+            color: #f1f5f9;
+            padding: 10px 5px;
+            margin-top: 0;
+            border-top: 4px solid #3b82f6;
+            text-align: center;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            color: #73a9ec; 
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            font-size: 1rem;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .footer-item:hover {
+            background-color: #334155;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .icon { font-size: 1.2rem; }  
+    </style>
+    <script>
+        MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }   
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bậc của Hợp số trong N!</h1>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('infographic')">📚 Infographic: Lý thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô phỏng Thuật toán</button>
+    </div>
+
+    <div id="infographic" class="tab-content active">
+
+        <div class="step-card step-blue">
+            <span class="step-badge bg-blue">Bước 1: Vấn đề với Hợp số</span>
+            <div class="step-title">Tại sao không dùng công thức Legendre trực tiếp?</div>
+            <div class="step-content">
+                <ul>
+                    <li>Công thức Legendre $v_p(N!) = \sum \lfloor N/p^k \rfloor$ chỉ áp dụng đúng khi <b>$p$ là số nguyên tố</b>.</li>
+                    <li>Nếu $p$ là <b>hợp số</b> (ví dụ $p=6, p=10$), nó được cấu tạo từ tích của các số nguyên tố nhỏ hơn.</li>
+                    <li><b>Ví dụ:</b> $p=6 = 2 \times 3$. Số lượng số 6 trong $N!$ phụ thuộc vào số lượng cặp (2, 3). Vì số lượng thừa số 2 luôn nhiều hơn thừa số 3, nên số lượng số 6 bị giới hạn bởi số lượng thừa số 3.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card step-orange">
+            <span class="step-badge bg-orange">Bước 2: Phân tích Thừa số Nguyên tố</span>
+            <div class="step-title">Chiến lược chia để trị</div>
+            <div class="step-content">
+                <p>Để tìm bậc của hợp số $p$, ta cần phân tích $p$ ra thừa số nguyên tố:</p>
+                <div class="math-formula">
+                    $p = p_1^{e_1} \times p_2^{e_2} \times \dots \times p_k^{e_k}$
+                </div>
+                <ul>
+                    <li>$p_i$: Các thừa số nguyên tố.</li>
+                    <li>$e_i$: Số mũ tương ứng của thừa số đó trong $p$.</li>
+                </ul>
+                <p><b>Ví dụ:</b> $p = 12 = 2^2 \times 3^1$. (Ở đây $p_1=2, e_1=2$ và $p_2=3, e_2=1$).</p>
+            </div>
+        </div>
+
+        <div class="step-card step-green">
+            <span class="step-badge bg-green">Bước 3: Công thức Tổng quát (Min Ratio)</span>
+            <div class="step-title">Nguyên lý "Mắt xích yếu nhất"</div>
+            <div class="step-content">
+                <p>Giả sử trong $N!$ có $x_i$ thừa số $p_i$. Số lượng bộ $p_i^{e_i}$ tạo được là $\lfloor x_i / e_i \rfloor$.</p>
+                <p>Bậc của hợp số $p$ trong $N!$ chính là giá trị nhỏ nhất trong các tỉ số này:</p>
+                <div class="math-formula">
+                    $Ans = \min \left( \frac{v_{p_1}(N!)}{e_1}, \frac{v_{p_2}(N!)}{e_2}, \dots, \frac{v_{p_k}(N!)}{e_k} \right)$
+                </div>
+                <p><b>Ví dụ:</b> Tìm bậc của 12 trong 10!<br>
+                   - Phân tích 12 = $2^2 \times 3^1$.<br>
+                   - Bậc của 2 trong 10! là 8. Số bộ $2^2$ tạo được: $8/2 = 4$.<br>
+                   - Bậc của 3 trong 10! là 4. Số bộ $3^1$ tạo được: $4/1 = 4$.<br>
+                   - Kết quả: $\min(4, 4) = 4$.
+                </p>
+            </div>
+        </div>
+
+        <div class="step-card step-purple">
+            <span class="step-badge bg-purple">Bước 4: Giải thuật Cài đặt</span>
+            <div class="step-title">Các bước thực hiện trong Code</div>
+            <div class="step-content">
+                <div class="code-block">
+ 1. Phân tích p ra thừa số nguyên tố: p = p1^e1 * p2^e2...
+ 2. Khởi tạo ans = vô cùng lớn.
+ 3. Duyệt qua từng thừa số nguyên tố (pi, ei):
+      + Tính bậc của pi trong N! bằng Legendre -> gọi là xi
+      + Tính số lượng tổ hợp tạo được: ratio = xi / ei
+      + Cập nhật ans = min(ans, ratio)
+ 4. Kết quả là ans.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <h2 style="margin-top:0; color:var(--color-blue)">Mô phỏng Tìm bậc Hợp số</h2>
+        
+        <div class="control-panel">
+            <label><b>Nhập N:</b></label>
+            <input type="number" id="inpN" value="10" placeholder="VD: 10">
+            
+            <label><b>Nhập P (Hợp số):</b></label>
+            <input type="number" id="inpP" value="12" placeholder="VD: 12">
+
+            <button class="action-btn" onclick="startSimulation()">▶ Bắt đầu lại</button>
+            <button class="action-btn step-btn" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+
+        <div class="var-dashboard">
+            <div class="var-box">
+                <div class="var-label">Thừa số (pi^ei)</div>
+                <div class="var-value" id="val_factor">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Bậc trong N! (xi)</div>
+                <div class="var-value" id="val_legendre">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Tỉ lệ (xi / ei)</div>
+                <div class="var-value" id="val_ratio">-</div>
+            </div>
+            <div class="var-box">
+                <div class="var-label">Kết quả Min (Ans)</div>
+                <div class="var-value success" id="val_min">-</div>
+            </div>
+        </div>
+
+        <div class="log-area" id="logArea">
+            <div class="log-entry log-info">Nhập N và P (nên là hợp số), sau đó nhấn "Bắt đầu lại".</div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        
+        <div class="footer-info">
+            <span class="footer-item">
+                <span class="icon">📞</span> 
+                <b>090378159</b>
+            </span>
+
+            <a href="http://xemdiem.luyenthichuyentin10.edu.vn:8081/login" target="_blank" class="footer-item">
+                <span class="icon">🌐</span> 
+                <b>luyenthichuyentin10.edu.vn</b>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- JS Logic ---
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function log(message, type = '') {
+        const area = document.getElementById('logArea');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = message;
+        area.appendChild(entry);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function updateVars(factor, legendre, ratio, minVal) {
+        if(factor !== null) document.getElementById('val_factor').innerText = factor;
+        if(legendre !== null) document.getElementById('val_legendre').innerText = legendre;
+        if(ratio !== null) {
+            const el = document.getElementById('val_ratio');
+            el.innerText = ratio;
+            el.className = 'var-value highlight';
+            setTimeout(() => el.className = 'var-value', 500);
+        }
+        if(minVal !== null) document.getElementById('val_min').innerText = minVal;
+    }
+
+    // --- Hàm Toán học ---
+    
+    // Hàm Legendre: Tìm bậc của số nguyên tố p trong n!
+    function findPowerLegendre(n, p) {
+        let res = 0;
+        let k = 1;
+        // Tránh vòng lặp vô tận nếu p=0 hoặc 1 (dù logic chặn input đã xử lý)
+        if (p <= 1) return 0; 
+        
+        for (let i = p; i <= n; i *= p) {
+            res += Math.floor(n / i);
+            // Check tràn số JS
+            if (i > Number.MAX_SAFE_INTEGER / p) break; 
+        }
+        return res;
+    }
+
+    // Generator chính
+    function* compositePowerGenerator(n, p) {
+        let tempP = p;
+        let factors = [];
+        
+        log(`Bắt đầu phân tích hợp số P = ${p}`, 'log-info');
+        updateVars('-', '-', '-', 'INF');
+
+        // 1. Phân tích thừa số nguyên tố
+        for (let i = 2; i * i <= tempP; i++) {
+            if (tempP % i === 0) {
+                let count = 0;
+                while (tempP % i === 0) {
+                    count++;
+                    tempP /= i;
+                }
+                factors.push({ prime: i, exponent: count });
+            }
+        }
+        if (tempP > 1) {
+            factors.push({ prime: tempP, exponent: 1 });
+        }
+
+        // In kết quả phân tích
+        let factorStr = factors.map(f => `${f.prime}^${f.exponent}`).join(" * ");
+        log(`=> Phân tích P: ${p} = ${factorStr}`, 'log-success');
+        
+        if (factors.length === 1 && factors[0].exponent === 1) {
+            log(`Lưu ý: ${p} là số nguyên tố. Thuật toán vẫn chạy đúng nhưng công thức Legendre trực tiếp sẽ nhanh hơn.`, 'log-info');
+        }
+
+        yield { msg: "Đã phân tích xong. Bắt đầu tính toán từng thành phần." };
+
+        // 2. Duyệt từng thừa số và tính Min
+        let finalAns = Number.MAX_SAFE_INTEGER;
+
+        for (let f of factors) {
+            let pi = f.prime;
+            let ei = f.exponent;
+
+            log(`--- Xét thừa số nguyên tố: ${pi} (mũ ${ei}) ---`, 'log-info');
+            
+            // Tính Legendre cho pi
+            let xi = findPowerLegendre(n, pi);
+            log(`Bậc của ${pi} trong ${n}! là: ${xi} (dùng Legendre)`, 'log-info');
+            updateVars(`${pi}^${ei}`, xi, '-', (finalAns === Number.MAX_SAFE_INTEGER ? 'INF' : finalAns));
+            yield { msg: `Đã tính được v_${pi}(${n}!) = ${xi}` };
+
+            // Tính tỷ lệ
+            let ratio = Math.floor(xi / ei);
+            log(`Số bộ ${pi}^${ei} tạo được: ${xi} / ${ei} = ${ratio}`, 'log-info');
+            updateVars(`${pi}^${ei}`, xi, ratio, (finalAns === Number.MAX_SAFE_INTEGER ? 'INF' : finalAns));
+            yield { msg: `Tỉ lệ thành phần: ${ratio}` };
+
+            // Cập nhật Min
+            if (ratio < finalAns) {
+                finalAns = ratio;
+                log(`Cập nhật kết quả nhỏ nhất mới: ${finalAns}`, 'log-success');
+            } else {
+                log(`Kết quả ${ratio} >= Min hiện tại (${finalAns}). Giữ nguyên Min.`, 'log-info');
+            }
+            updateVars(`${pi}^${ei}`, xi, ratio, finalAns);
+            yield { msg: `Min hiện tại = ${finalAns}` };
+        }
+
+        log(`=== KẾT THÚC: Bậc của ${p} trong ${n}! là ${finalAns} ===`, 'log-success');
+        updateVars('-', '-', '-', finalAns);
+    }
+
+    // --- Controller ---
+    let simulator = null;
+
+    function startSimulation() {
+        const n = parseInt(document.getElementById('inpN').value);
+        const p = parseInt(document.getElementById('inpP').value);
+
+        if (n < 1 || p < 2) {
+            alert("Vui lòng nhập N >= 1 và P >= 2");
+            return;
+        }
+
+        document.getElementById('logArea').innerHTML = '';
+        document.getElementById('btnStep').disabled = false;
+        
+        simulator = compositePowerGenerator(n, p);
+        
+        log("Đã khởi tạo. Nhấn 'Bước tiếp theo' để chạy.", 'log-info');
+    }
+
+    function nextStep() {
+        if (!simulator) return;
+        const result = simulator.next();
+        
+        if (result.value && result.value.msg) {
+            // log(result.value.msg, 'log-info'); 
+            // Tin nhắn đã được log bên trong hàm generator cho chi tiết hơn, 
+            // ở đây chỉ để điều khiển luồng yield
+        }
+
+        if (result.done) {
+            document.getElementById('btnStep').disabled = true;
+        }
+    }
+    
+    // Khởi tạo tab mặc định
+    document.getElementById('infographic').classList.add('active');
+</script>
+
+</body>
+</html>
