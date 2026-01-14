@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài toán: Chia Bánh (Tổng Liên Tiếp)</title>
+    <style>
+        :root {
+            /* Theme colors */
+            --color-blue: #3b82f6;    
+            --color-orange: #f97316;  
+            --color-purple: #8b5cf6;  
+            --color-green: #10b981;   
+            --color-red: #ef4444;
+            --color-dark: #1e293b;
+
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* --- HEADER & FOOTER --- */
+        .header {
+            background-color: #1e1b4b; color: #a5b4fc; padding: 5px 0px;
+            margin-top: 0; border-top: 4px solid #8b5cf6; text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+        .main-title {
+            text-align: center;
+            color: #e0aa63; 
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin: 15px 0;
+        }
+
+        .teacher-footer {
+            background-color: #1e1b4b; color: #f1f5f9; padding: 10px 5px;
+            margin-top: 0; border-top: 4px solid #8b5cf6; text-align: center;
+            border-radius: 0 0 12px 12px;
+        }
+        .footer-title { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; color: #c4b5fd; }
+        .footer-info { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 1rem; }
+        .footer-item { display: flex; align-items: center; gap: 8px; color: #cbd5e1; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 6px; }
+        .footer-item:hover { background-color: #312e81; color: #fff; transform: translateY(-2px); }
+        .icon { font-size: 1.2rem; }
+
+        /* --- TABS --- */
+        .tabs {
+            display: flex;
+            background-color: #e2e8f0;
+            margin-bottom: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            background: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--color-purple); 
+            border-top: 4px solid var(--color-purple);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            min-height: 600px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC STYLES --- */
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .text-blue { color: var(--color-blue); }
+        .text-orange { color: var(--color-orange); }
+        .text-purple { color: var(--color-purple); }
+        .text-green { color: var(--color-green); }
+
+        .step-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .border-blue { border-left: 6px solid var(--color-blue); }
+        .border-orange { border-left: 6px solid var(--color-orange); }
+        .border-purple { border-left: 6px solid var(--color-purple); }
+        .border-green { border-left: 6px solid var(--color-green); }
+
+        .step-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: var(--color-blue); }
+        .bg-orange { background-color: var(--color-orange); }
+        .bg-green { background-color: var(--color-green); }
+        .bg-purple { background-color: var(--color-purple); }
+
+        .math-formula {
+            background-color: #cce2d1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #067206;
+            border: 1px dashed var(--color-green);
+            margin: 15px 0;
+        }
+
+        /* Code Block */
+        .code-block {
+            background-color: #1e1e1e; color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 15px; line-height: 1.6; padding: 16px;
+            border-radius: 8px; overflow-x: auto; white-space: pre;
+            border-left: 5px solid #4fc3f7;
+        }
+        .code-block .kw { color: #2fcbd6; font-weight: bold; } /* C++ Keyword */
+        .code-block .var { color: #ddb42d; font-weight: bold; }
+        .code-block .type { color: #3a57d6; }
+        .code-block .num { color: #e04a3f; }
+        .code-block .cmt { color: #808080; font-style: italic; }
+
+        /* --- SIMULATION STYLES --- */
+        .control-panel {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        input[type="text"] { 
+            padding: 10px; border: 2px solid #cbd5e1; border-radius: 6px; 
+            font-family: monospace; font-size: 1.1rem; width: 150px;
+            transition: border-color 0.3s;
+        }
+        select { padding: 10px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 1rem; }
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-blue); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+            transition: background 0.3s;
+        }
+        button.action-btn:hover { opacity: 0.9; }
+        button.step-btn { background-color: var(--color-purple); }
+        button.reset-btn { background-color: var(--color-red); }
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .dash-card {
+            background: white; padding: 20px; border-radius: 8px; text-align: center;
+            border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .dash-label { color: #64748b; font-size: 0.9rem; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .dash-value { font-size: 1.5rem; font-weight: bold; font-family: monospace; }
+        
+        .val-N { color: var(--color-blue); }
+        .val-check { color: var(--color-orange); font-size: 1.2rem; }
+        .val-res { color: var(--color-green); }
+
+        /* Table */
+        .data-table {
+            border-collapse: collapse; width: 100%; background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 15px;
+        }
+        .data-table th, .data-table td { border: 1px solid #cbd5e1; padding: 12px; text-align: center; }
+        .data-table th { background-color: var(--color-purple); color: white; }
+        
+        .row-check { background-color: #fff7ed; } 
+        .row-green { background-color: #dcfce7; font-weight: bold; color: #065f46; }
+        .row-ignore { color: #94a3b8; font-style: italic; }
+        
+        .highlight-new { animation: highlightCell 1.5s; }
+        @keyframes highlightCell {
+            0% { background-color: #fcd34d; }
+            100% { background-color: transparent; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài toán: Chia Bánh (Tổng Liên Tiếp)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn Giải</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Thuật Toán</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        
+        <h2 class="section-header text-blue">1. Phân tích đề bài</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Yêu cầu</span>
+            <div class="step-content">
+                <p>Chia $N$ cái bánh vào các túi sao cho số bánh trong các túi là các <b>số tự nhiên liên tiếp</b>.</p>
+                <p><b>Ví dụ $N = 35$</b></p>
+                <ul>
+                    <li>Cách 1: $2 + 3 + 4 + 5 + 6 + 7 + 8 = 35$</li>
+                    <li>Cách 2: $5 + 6 + 7 + 8 + 9 = 35$</li>
+                    <li>Cách 3: $17 + 18 = 35$</li>
+                </ul>
+                <p>$\Rightarrow$ <b>Bài toán quy về:</b> Tìm các dãy số nguyên dương liên tiếp có tổng bằng $N$.</p>
+            </div>
+        </div>
+
+        <h2 class="section-header text-orange">2. Phương pháp 1: Vét cạn (Subtask 1)</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Thuật toán</span>
+            <div class="step-content">
+                <p>Ta sẽ thử tất cả các dãy số liên tiếp có thể.</p>
+                <ul>
+                    <li>Duyệt số bắt đầu của dãy ($i$) từ 1 đến $N-1$.</li>
+                    <li>Với mỗi số bắt đầu $i$, ta thử cộng dồn các số liên tiếp tiếp theo ($i+1, i+2, \dots$).</li>
+                    <li>Nếu tổng bằng $N$ thì ghi nhận kết quả.</li>
+                    <li>Nếu tổng vượt quá $N$ thì dừng và thử số bắt đầu tiếp theo.</li>
+                </ul>
+                <p><b>Độ phức tạp:</b> $O(N \sqrt{N})$ hoặc $O(N^2)$. Chỉ áp dụng cho $N$ nhỏ.</p>
+            </div>
+        </div>
+
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Các bước thực hiện (Mã giả)</span>
+            <div class="code-block">
+Tạo mảng <span class="kw">pair</span> kiểu <span class="type">long long</span> <span class="var">vitri </span> <span class="cmt">// Để lưu các cặp giá trị bắt đầu và kết thúc của dãy tổng liên tiếp</span>
+Tạo biến <span class="var">dem_kq</span> </span> <span class="cmt">// Để lưu số lượng tổng liên tiếp thõa điều kiện tìm được</span>
+Duyệt <span class="var">start</span> từ <span class="num">1</span> đến <span class="var">N</span> / <span class="num">2</span>
+    <span class="var">sum</span> = <span class="var">start</span>
+    <span class="var">next_val</span> = <span class="var">start</span> + <span class="num">1</span>
+    Trong khi (<span class="var">sum</span> < <span class="var">N</span>):
+        <span class="var">sum</span> = <span class="var">sum</span> + <span class="var">next_val</span>
+        <span class="var">next_val</span> tăng lên <span class="num">1</span>
+    Nếu (<span class="var">sum</span> == <span class="var">N</span>):
+        Ghi nhận dãy bắt đầu từ <span class="var">start</span> và kết thúc là <span class="var">N</span> - <span class="var">start</span>
+        Tăng biến <span class="var">dem_kq</span>
+Xuất <span class="var">dem_kq</span> </span> <span class="cmt">// Tổng số dãy liên tiếp tìm được</span>
+Duyệt lại mảng <span class="var">vitri</span>
+    Duyệt từ <span class="kw">frist</span> đến <span class="kw">second</span> để xuất các phần tử của dãy liên tiếp
+            </div>
+        </div>
+
+        <h2 class="section-header text-green">3. Phương pháp 2: Toán học (Tổng cấp số cộng - Tối ưu)</h2>
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Biến đổi công thức</span>
+            <div class="step-content">
+                <p>Giả sử dãy số bắt đầu từ số $a$, có $k+1$ phần tử (tức là cộng thêm $k$ số tiếp theo).</p>
+                <p>Dãy số là: $a, (a+1), (a+2), \dots, (a+k)$.</p>
+                <p>Tổng của dãy số này là:</p>
+                <div class="math-formula">
+                    $N = \underbrace{a + (a+1) + \dots + (a+k)}_{\text{k+1 số hạng}}$
+                </div>
+                <p>Tách $a$ ra, ta có:</p>
+                <div class="math-formula">
+                    $N = (k+1) \times a + (1 + 2 + \dots + k)$
+                </div>
+                <p>Áp dụng công thức tổng Gauss cho dãy số $(1+2+3+...+k)$ ta được</p>
+                <div class="math-formula">
+                    $N = (k+1) \times a + \frac{k(k+1)}{2}$
+                </div>
+                <p><b>Giải thuật tìm $a$:</b></p>
+                <ul>
+                    <li>Ta duyệt biến $k$ (số lượng phần tử thêm vào) bắt đầu từ 1.</li>
+                    <li>Điều kiện dừng: $\frac{k(k+1)}{2} < N$ (Vì $a \ge 1$ nên phần còn lại phải nhỏ hơn $N$).</li>
+                    <li>Tại mỗi bước, kiểm tra xem $(N - \frac{k(k+1)}{2})$ có chia hết cho $(k+1)$ không.</li>
+                    <li>Nếu chia hết $\Rightarrow$ Tìm được $a = (N - \frac{k(k+1)}{2}) / (k+1)$.</li>
+                </ul>
+                <p><b>Độ phức tạp:</b> $O(\sqrt{N})$. Với $N=10^{18}$, vòng lặp chỉ chạy khoảng $1.4 \times 10^9$ lần (chấp nhận được trong thời gian giới hạn).</p>
+            </div>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Các bước thực hiện (Mã giả)</span>
+            <div class="code-block">
+Tạo mảng <span class="kw">pair</span> kiểu <span class="type">long long</span> <span class="var">vitri </span> <span class="cmt">// Để lưu các cặp giá trị bắt đầu và kết thúc của dãy tổng liên tiếp</span>
+Tạo biến <span class="var">dem_kq</span> </span> <span class="cmt">// Để lưu số lượng tổng liên tiếp thõa điều kiện tìm được</span>
+Duyệt <span class="var">k</span> từ <span class="num">1</span> tăng dần:
+    <span class="var">triangle_sum</span> = (<span class="var">k</span> * (<span class="var">k</span> + <span class="num">1</span>)) / <span class="num">2</span>
+    Nếu <span class="var">triangle_sum</span> >= <span class="var">N</span>:
+        Dừng vòng lặp (không còn nghiệm)
+    <span class="var">remainder</span> = <span class="var">N</span> - <span class="var">triangle_sum</span>
+    <span class="var">count</span> = <span class="var">k</span> + <span class="num">1</span>
+    Nếu <span class="var">remainder</span> chia hết cho <span class="var">count</span>:
+        Ghi nhận dãy bắt đầu từ <span class="var">a</span> và kết thúc là <span class="var">a</span> + <span class="var">k</span>
+        Tăng biến <span class="var">dem_kq</span>
+Xuất <span class="var">dem_kq</span> </span> <span class="cmt">// Tổng số dãy liên tiếp tìm được</span>
+Duyệt lại mảng <span class="var">vitri</span>
+    Duyệt từ <span class="kw">frist</span> đến <span class="kw">second</span> để xuất các phần tử của dãy liên tiếp
+            </div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <h2 style="margin-top:0; color:var(--color-purple)">Mô phỏng Thuật toán</h2>
+        
+        <div class="control-panel">
+            <label><b>Nhập N:</b></label>
+            <input type="text" id="inpN" value="35" placeholder="Ví dụ: 35">
+            
+            <label><b>Thuật toán:</b></label>
+            <select id="selAlgo">
+                <option value="brute">Vét cạn (Duyệt theo số đầu)</option>
+                <option value="math">Toán học (Duyệt theo độ dài)</option>
+            </select>
+
+            <button class="action-btn" id="btnRun" onclick="runSimulation()">▶ Chạy Ngay</button>
+            <button class="action-btn step-btn" id="btnStartStep" onclick="startStepMode()">👟 Từng Bước</button>
+            <button class="action-btn step-btn" id="btnNext" onclick="nextStep()" style="display:none;" disabled>👟 Tiếp theo</button>
+            <button class="action-btn reset-btn" onclick="resetApp()">↺ Làm Mới</button>
+        </div>
+
+        <div class="dashboard">
+            <div class="dash-card">
+                <span class="dash-label">Số N cần chia</span>
+                <div class="dash-value val-N" id="valN">--</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">Độ dài / Tổng kiểm tra</span>
+                <div class="dash-value val-check" id="valCheck">--</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">Số cách tìm được</span>
+                <div class="dash-value val-res" id="valCount">0</div>
+            </div>
+        </div>
+
+        <div id="statusText" style="text-align: center; color: #64748b; font-style: italic; margin-bottom: 15px;">Sẵn sàng.</div>
+
+        <div style="overflow-x: auto; max-height: 400px;">
+            <table class="data-table" id="simTable">
+                <thead>
+                    <tr>
+                        <th width="15%">Bước</th>
+                        <th width="35%">Tính toán</th>
+                        <th width="25%">Kiểm tra điều kiện</th>
+                        <th width="25%">Kết luận</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item"><span class="icon">📞</span> <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item"><span class="icon">🌐</span> <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Javascript Logic ---
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // Global variables
+    let g_N;
+    let g_step = 0;
+    let g_count = 0;
+    let generator = null;
+    let g_algo = '';
+
+    function resetApp() {
+        document.getElementById('tableBody').innerHTML = '';
+        document.getElementById('valN').innerText = '--';
+        document.getElementById('valCheck').innerText = '--';
+        document.getElementById('valCount').innerText = '0';
+        document.getElementById('statusText').innerText = 'Sẵn sàng.';
+        document.getElementById('btnStartStep').style.display = 'inline-block';
+        document.getElementById('btnNext').style.display = 'none';
+        document.getElementById('btnRun').disabled = false;
+        
+        g_count = 0;
+        g_step = 0;
+    }
+
+    function addRow(step, calc, check, result, type) {
+        const tbody = document.getElementById('tableBody');
+        const row = document.createElement('tr');
+        row.className = 'highlight-new';
+        if (type === 'success') row.className += ' row-green';
+        else if (type === 'check') row.className += ' row-check';
+        else row.className += ' row-ignore';
+
+        row.innerHTML = `<td>${step}</td><td>${calc}</td><td>${check}</td><td>${result}</td>`;
+        tbody.appendChild(row);
+        row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    // --- Generator Functions ---
+
+    // Thuật toán Vét cạn (Brute Force) - Đã sửa lỗi logic và vòng lặp
+    function* bruteForceGen(N) {
+        let limitStep = 200; // Giới hạn bước hiển thị
+        
+        // Chỉ cần duyệt start đến khoảng N/2 + 1 vì ít nhất cần 2 số
+        for (let start = 1n; start <= N / 2n + 1n; start++) {
+            let currentSum = start;
+            let sequence = [start];
+            let nextVal = start + 1n;
+
+            while (currentSum < N) {
+                currentSum += nextVal;
+                sequence.push(nextVal);
+                nextVal++;
+            }
+
+            g_step++;
+            
+            // Cập nhật Dashboard
+            document.getElementById('valCheck').innerText = `Start=${start}`;
+
+            let calcInfo = `Dãy bắt đầu ${start}: ${start} + ... + ${nextVal-1n}`;
+            
+            if (currentSum === N) {
+                g_count++;
+                document.getElementById('valCount').innerText = g_count;
+                yield {
+                    step: g_step,
+                    calc: calcInfo,
+                    check: `Tổng = ${currentSum} == ${N}`,
+                    result: `✅ Tìm thấy: ${sequence.join('+')}`,
+                    type: 'success'
+                };
+            } else {
+                // Chỉ in log mỗi 5 bước hoặc khi gần tìm thấy để đỡ lag
+                if (g_step % 5 === 0) {
+                    yield {
+                        step: g_step,
+                        calc: calcInfo,
+                        check: `Tổng = ${currentSum} > ${N}`,
+                        result: `Không thỏa, thử tiếp`,
+                        type: 'ignore'
+                    };
+                }
+            }
+
+            if (g_step >= limitStep) {
+                alert("Đã đạt giới hạn hiển thị mô phỏng (200 bước).");
+                return;
+            }
+        }
+        document.getElementById('statusText').innerText = "Đã duyệt xong.";
+    }
+
+    // Thuật toán Toán học (TLT)
+    function* mathGen(N) {
+        let i = 1n; // i là k trong công thức (số lượng số cộng thêm)
+        while (true) {
+            g_step++;
+            
+            let triNum = (i * (i + 1n)) / 2n;
+            
+            if (triNum >= N) {
+                yield {
+                    step: g_step,
+                    calc: `Tam giác(${i}) = ${triNum}`,
+                    check: `${triNum} >= ${N}`,
+                    result: `Dừng thuật toán`,
+                    type: 'ignore'
+                };
+                break;
+            }
+
+            let length = i + 1n;
+            let remainder = N - triNum;
+            let isDivisible = (remainder % length === 0n);
+            
+            document.getElementById('valCheck').innerText = `Len=${length}, Dư=${remainder}`;
+
+            if (isDivisible) {
+                let a = remainder / length;
+                g_count++;
+                document.getElementById('valCount').innerText = g_count;
+                
+                let seqStr = `${a} + ... + ${a+i}`;
+                if (i < 5n) { 
+                    let arr = [];
+                    for(let k=0n; k<=i; k++) arr.push(a+k);
+                    seqStr = arr.join(' + ');
+                }
+
+                yield {
+                    step: g_step,
+                    calc: `Len=${length}. Dư=${remainder}`,
+                    check: `${remainder} % ${length} == 0 (a=${a})`,
+                    result: `✅ Dãy: ${seqStr}`,
+                    type: 'success'
+                };
+            } else {
+                yield {
+                    step: g_step,
+                    calc: `Len=${length}. Dư=${remainder}`,
+                    check: `${remainder} % ${length} != 0`,
+                    result: `Không thỏa mãn`,
+                    type: 'check'
+                };
+            }
+            i++;
+        }
+        document.getElementById('statusText').innerText = "Tính toán hoàn tất.";
+    }
+
+    // --- Control Functions ---
+
+    function initVars() {
+        try {
+            const val = document.getElementById('inpN').value.trim();
+            if(!val) throw new Error();
+            g_N = BigInt(val);
+            if (g_N <= 0n) throw new Error();
+        } catch (e) {
+            alert("Vui lòng nhập N là số nguyên dương.");
+            return false;
+        }
+        g_algo = document.getElementById('selAlgo').value;
+        
+        // Cảnh báo Vét cạn
+        if (g_algo === 'brute' && g_N > 1000n) {
+             if(!confirm("N lớn (>1000) chạy vét cạn sẽ rất lâu. Bạn có muốn tiếp tục?")) return false;
+        }
+
+        document.getElementById('valN').innerText = g_N.toString();
+        return true;
+    }
+
+    function startStepMode() {
+        if (!initVars()) return;
+        resetApp();
+        document.getElementById('valN').innerText = g_N.toString();
+
+        document.getElementById('btnStartStep').style.display = 'none';
+        document.getElementById('btnNext').style.display = 'inline-block';
+        document.getElementById('btnNext').disabled = false;
+        document.getElementById('btnRun').disabled = true;
+
+        if (g_algo === 'brute') generator = bruteForceGen(g_N);
+        else generator = mathGen(g_N);
+        
+        nextStep(); 
+    }
+
+    function nextStep() {
+        const res = generator.next();
+        if (!res.done) {
+            const data = res.value;
+            if (data) addRow(data.step, data.calc, data.check, data.result, data.type);
+        } else {
+            document.getElementById('btnNext').disabled = true;
+            document.getElementById('statusText').innerText = "Hoàn thành.";
+        }
+    }
+
+    function runSimulation() {
+        if (!initVars()) return;
+        resetApp();
+        document.getElementById('valN').innerText = g_N.toString();
+
+        if (g_algo === 'brute') generator = bruteForceGen(g_N);
+        else generator = mathGen(g_N);
+        
+        let limit = 200; 
+        
+        const interval = setInterval(() => {
+            let res = generator.next();
+            if (res.done || limit-- <= 0) {
+                clearInterval(interval);
+                if(limit <= 0 && !res.done) alert("Đã dừng mô phỏng nhanh do quá nhiều bước.");
+                document.getElementById('statusText').innerText = "Hoàn thành.";
+            } else {
+                const data = res.value;
+                if (data) addRow(data.step, data.calc, data.check, data.result, data.type);
+            }
+        }, 50);
+    }
+
+</script>
+
+<script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</body>
+</html>

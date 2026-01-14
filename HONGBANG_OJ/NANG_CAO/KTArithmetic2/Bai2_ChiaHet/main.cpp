@@ -8,19 +8,11 @@ int main()
     freopen("CHIAHET.INP", "r", stdin);
     freopen("CHIAHET.OUT", "w", stdout);
     cin >> n;
-    if(n<=1e7){
-        for(long long i = 1; i<=n; ++i){
-            if(i%2!=0&&i%3!=0&&i%5!=0&&i%7!=0) kq++;
-        }
-    }
-    else{
-        long long d = 0;
-        for(long long i = 1; i<=210; i++){
-            if(i%2!=0&&i%3!=0&&i%5!=0&&i%7!=0) d++;
-        }
-        long long sl = n/210, slk = n%210;
-        kq = (d*sl)+(d*slk);
-    }
+    kq = n;
+    kq -= ((n/2)+(n/3)+(n/5)+(n/7));
+    kq += ((n/(2*3))+(n/(2*5))+(n/(2*7))+(n/(3*5))+(n/(3*7))+(n/(5*7)));
+    kq -= ((n/(2*3*5))+(n/(7*3*5))+(n/(2*3*7))+(n/(2*7*5)));
+    kq += (n/(2*3*5*7));
     cout << kq;
     return 0;
 }
