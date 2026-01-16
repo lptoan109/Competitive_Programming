@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 3: Quy Hoạch Công Viên (Bộ Số Pytago)</title>
+    <style>
+        :root {
+            /* Theme colors - Consistent Style */
+            --color-blue: #3b82f6;    
+            --color-orange: #f97316;  
+            --color-purple: #8b5cf6;  
+            --color-green: #10b981;   
+            --color-red: #ef4444;
+            --color-dark: #1e293b;
+
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* --- HEADER & FOOTER --- */
+        .header {
+            background-color: #1e1b4b; color: #a5b4fc; padding: 5px 0px;
+            margin-top: 0; border-top: 4px solid #8b5cf6; text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+        .main-title {
+            text-align: center;
+            color: #e0aa63; 
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin: 15px 0;
+        }
+
+        .teacher-footer {
+            background-color: #1e1b4b; color: #f1f5f9; padding: 10px 5px;
+            margin-top: 0; border-top: 4px solid #8b5cf6; text-align: center;
+            border-radius: 0 0 12px 12px;
+        }
+        .footer-title { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; color: #c4b5fd; }
+        .footer-info { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 1rem; }
+        .footer-item { display: flex; align-items: center; gap: 8px; color: #cbd5e1; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 6px; }
+        .footer-item:hover { background-color: #312e81; color: #fff; transform: translateY(-2px); }
+        .icon { font-size: 1.2rem; }
+
+        /* --- TABS --- */
+        .tabs {
+            display: flex;
+            background-color: #e2e8f0;
+            margin-bottom: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            background: #cbd5e1;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--color-purple); 
+            border-top: 4px solid var(--color-purple);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            min-height: 600px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC STYLES --- */
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .text-blue { color: var(--color-blue); }
+        .text-orange { color: var(--color-orange); }
+        .text-purple { color: var(--color-purple); }
+        .text-green { color: var(--color-green); }
+
+        .step-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .border-blue { border-left: 6px solid var(--color-blue); }
+        .border-orange { border-left: 6px solid var(--color-orange); }
+        .border-purple { border-left: 6px solid var(--color-purple); }
+        .border-green { border-left: 6px solid var(--color-green); }
+
+        .step-badge {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: var(--color-blue); }
+        .bg-orange { background-color: var(--color-orange); }
+        .bg-purple { background-color: var(--color-purple); }
+        .bg-green { background-color: var(--color-green); }
+
+        .math-box {
+            background-color: #dfcce2;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #690672;
+            border: 1px dashed var(--color-purple);
+            margin: 15px 0;
+        }
+
+        /* --- CODE BLOCK STYLING --- */
+        .code-block {
+            background-color: #1e1e1e;
+            color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre;
+            border-left: 5px solid #4fc3f7;
+        }
+
+        .code-block .kw { color: #cc7832; font-weight: bold; } /* Keyword */
+        .code-block .var { color: #ffc66d; } /* Variable */
+        .code-block .type { color: #a9b7c6; font-weight: bold; } /* Type */
+        .code-block .num { color: #6897bb; } /* Number */
+        .code-block .str { color: #6a8759; } /* String */
+        .code-block .cmt { color: #808080; font-style: italic; } /* Comment */
+
+        /* --- SIMULATION STYLES --- */
+        .control-panel {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        input[type="number"] { 
+            padding: 10px; border: 2px solid #cbd5e1; border-radius: 6px; 
+            font-family: monospace; font-size: 1.1rem; width: 100px;
+            transition: border-color 0.3s;
+        }
+        select {
+            padding: 10px; border: 2px solid #cbd5e1; border-radius: 6px; 
+            font-size: 1rem;
+        }
+        input[type="number"]:focus, select:focus { border-color: var(--color-purple); outline: none; }
+        
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-blue); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+            transition: background 0.3s;
+        }
+        button.action-btn:hover { opacity: 0.9; }
+        button.step-btn { background-color: var(--color-purple); }
+        button.reset-btn { background-color: var(--color-red); }
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        /* Dashboard Cards */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .dash-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .dash-label { color: #64748b; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .dash-value { font-size: 1.4rem; font-weight: bold; font-family: monospace; }
+        
+        .val-uv { color: var(--color-purple); }
+        .val-ab { color: var(--color-blue); }
+        .val-c { color: var(--color-green); }
+        .val-k { color: var(--color-orange); }
+
+        /* Status Text */
+        #statusText {
+            text-align: center; color: #64748b; font-style: italic; margin-bottom: 15px; font-weight: 500;
+        }
+
+        /* Table */
+        .data-table {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 14px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: center;
+        }
+        .data-table th { background-color: var(--color-purple); color: white; }
+        
+        .row-calc { background-color: #eff6ff; } 
+        .row-found { background-color: #dcfce7; font-weight: bold; color: #065f46; } /* Green tint */
+        .row-skip { background-color: #fff1f2; color: #9f1239; font-style: italic;} /* Red tint */
+        
+        .highlight-new { animation: highlightCell 1.5s; }
+        @keyframes highlightCell {
+            0% { background-color: #fcd34d; }
+            100% { background-color: transparent; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 3: Quy Hoạch Công Viên (Bộ Số Pytago)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Thuật Toán</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        
+        <h2 class="section-header text-blue">1. Phân tích đề bài</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Yêu cầu</span>
+            <div class="step-content">
+                <p><b>Mục tiêu:</b> Tìm tất cả các cặp kích thước $(A, B)$ thỏa mãn:</p>
+                <ul>
+                    <li>$A, B$ là số nguyên nằm trong đoạn $[M, N]$. ($M \le A, B \le N$)</li>
+                    <li>Độ dài đường chéo $C = \sqrt{A^2 + B^2}$ cũng phải là số nguyên.</li>
+                    <li>Nói cách khác: Tìm bộ ba số Pytago $(A, B, C)$ thỏa mãn điều kiện biên.</li>
+                </ul>
+                <p><b>Dữ liệu vào:</b> 2 số nguyên $M, N$ ($0 < M \le N \le 10^9$).</p>
+                <p><b>Kết quả:</b> Liệt kê các bộ 3 số $(A, B, C)$ tăng dần theo $A$.</p>
+            </div>
+        </div>
+
+        <h2 class="section-header text-orange">2. Phương pháp Vét cạn (Subtask 1)</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Phân tích & Mã giả</span>
+            <div class="step-content">
+                <p><b>Ý tưởng:</b> Dùng 2 vòng lặp lồng nhau duyệt tất cả các giá trị $A$ và $B$ trong khoảng $[M, N]$. Kiểm tra xem tổng bình phương có phải là số chính phương hay không.</p>
+                <p><b>Độ phức tạp:</b> $O((N-M)^2)$. Chỉ phù hợp với $N \le 10^4$.</p>
+                <div class="code-block">
+Duyệt <span class="var">A</span> từ <span class="var">M</span> đến <span class="var">N</span>:
+    Duyệt <span class="var">B</span> từ <span class="var">M</span> đến <span class="var">N</span>:
+        <span class="var">C_binh_phuong</span> = <span class="var">A</span>*<span class="var">A</span> + <span class="var">B</span>*<span class="var">B</span>
+        <span class="var">C</span> = <span class="kw">sqrt</span>(<span class="var">C_binh_phuong</span>)
+        
+        <span class="cmt">// Kiểm tra C có phải số nguyên</span>
+        Nếu (<span class="var">C</span> * <span class="var">C</span> == <span class="var">C_binh_phuong</span>):
+            Xuất <span class="var">A</span>, <span class="var">B</span>, <span class="var">C</span>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-header text-purple">3. Phương pháp Tổng quát (Subtask 2 - Euclid)</h2>
+        <div class="step-card border-purple">
+            <span class="step-badge bg-purple">Công thức Euclid</span>
+            <div class="step-content">
+                <p>Công thức Euclid cho phép sinh ra các bộ ba số Pytago nguyên thủy $(A, B, C)$ từ 2 số nguyên $U, V$.</p>
+                <div class="math-box">
+                    Chọn $U > V > 0$ sao cho:<br>
+                    1. $gcd(U, V) = 1$ (Nguyên tố cùng nhau)<br>
+                    2. $(U - V)$ là số lẻ (Khác tính chẵn lẻ)<br>
+                    Khi đó: <br>
+                    $A = U^2 - V^2$ <br>
+                    $B = 2UV$ <br>
+                    $C = U^2 + V^2$ <br>
+                </div>
+                <div>
+                    <b>Chứng minh công thức:</b><br>
+                    Thay $A, B, C$ bằng công thức trên ta có <br>
+                    $(U^2 - V^2)^2 + (2UV)^2 = (U^2 + V^2)^2$ <br>
+                    Khai triển hằng đăng thức ta có <br>
+                    $(U^4 – 2U^2V^2 + V^4) + 4U^2V^2 = (U^4 + 2U^2V^2 + V^4)$<br>
+                    Rút gọn vế trái ta được<br>
+                    $(U^4 + 2U^2V^2 + V^4) = (U^4 + 2U^2V^2 + V^4)$<br>
+                    Ta thấy vế trái bằng vế phải nên công thức này luôn tạo ra bộ $3$ số <b>Pitago</b> đúng <br>
+                </div>
+                <p><b>Ví dụ:</b> Chọn $U=2, V=1$ (thỏa mãn điều kiện).<br>
+                $\Rightarrow A = 2^2 - 1^2 = 3; \quad B = 2.2.1 = 4; \quad C = 2^2 + 1^2 = 5$. Ta được bộ (3, 4, 5).</p>
+            </div>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Giải thuật Tối ưu</span>
+            <div class="step-content">
+                <p>Để tìm nghiệm trong đoạn $[M, N]$ lớn ($N \le 10^9$), ta duyệt $U, V$ để tạo bộ gốc, sau đó nhân với hệ số $K$.</p>
+                <p><b>Giới hạn duyệt $U$:</b> Vì $B = 2UV \le N$ và $V \ge 1 \Rightarrow 2U \le N \Rightarrow U \le N/2$.<br> 
+                Chặt hơn: $A = U^2 - V^2 \le N$. Nếu $V$ nhỏ thì $U \approx \sqrt{N}$.<br>
+                Giới hạn an toàn: $U$ chạy từ 2 đến $\sqrt{2N}$.</p>
+                
+                <div class="code-block">
+<span class="kw">Vector</span> <span class="var">res</span>
+Duyệt <span class="var">u</span> từ 2 đến <span class="kw">sqrt</span>(2*<span class="var">N</span>):
+    Duyệt <span class="var">v</span> từ 1 đến <span class="var">u</span> - 1:            
+        <span class="cmt">// Tạo cặp giá trị (A, B) cơ bản</span>
+        Nếu (<span class="var">u</span>-<span class="var">v</span> lẻ) VÀ (<span class="kw">gcd</span>(<span class="var">u</span>, <span class="var">v</span>) == 1):
+            <span class="var">a_goc</span> = <span class="var">u</span>*<span class="var">u</span> - <span class="var">v</span>*<span class="var">v</span>
+            <span class="var">b_goc</span> = 2*<span class="var">u</span>*<span class="var">v</span>
+            
+            <span class="cmt">// Nhân bản k lần để tìm các bộ trong khoảng [M, N]</span>
+            <span class="var">k</span> = 1
+            Trong khi <span class="var">a_goc</span> * <span class="var">k</span> <= <span class="var">N</span> và <span class="var">b_goc</span> * <span class="var">k</span> <= <span class="var">N</span> thì lặp lại
+                <span class="var">A</span> = <span class="var">a_goc</span> * <span class="var">k</span>
+                <span class="var">B</span> = <span class="var">b_goc</span> * <span class="var">k</span>
+                Nếu (<span class="var">A</span> >= <span class="var">M</span> và <span class="var">B</span> >= <span class="var">M</span>):
+                    Thêm (<span class="var">A</span>, <span class="var">B</span>) vào <span class="var">res</span>
+                    Nếu <span class="var">A</span> != <span class="var">B</span>: Thêm (<span class="var">B</span>, <span class="var">A</span>) vào <span class="var">res</span>
+                <span class="var">k</span>++
+Sắp xếp và in <span class="var">res</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <h2 style="margin-top:0; color:var(--color-purple)">Mô phỏng thuật toán</h2>
+        
+        <div class="control-panel">
+            <label><b>Nhập M:</b></label>
+            <input type="number" id="inpM" value="10" min="1">
+            <label><b>Nhập N:</b></label>
+            <input type="number" id="inpN" value="20" min="1">
+            
+            <label><b>Phương pháp:</b></label>
+            <select id="selAlgo" onchange="resetApp()">
+                <option value="brute">Vét cạn (2 vòng lặp)</option>
+                <option value="euclid">Euclid (Sinh bộ số)</option>
+            </select>
+
+            <button class="action-btn" id="btnRun" onclick="runAll()">▶ Chạy Nhanh</button>
+            <button class="action-btn step-btn" id="btnStartStep" onclick="startStepMode()">👟 Chạy Từng Bước</button>
+            <button class="action-btn step-btn" id="btnNext" onclick="nextStep()" style="display:none;" disabled>👟 Bước Tiếp Theo</button>
+            <button class="action-btn reset-btn" onclick="resetApp()">↺ Làm Mới</button>
+        </div>
+
+        <div class="dashboard" id="dashboardEuclid" style="display: none;">
+            <div class="dash-card">
+                <span class="dash-label">Bộ sinh (u, v)</span>
+                <div class="dash-value val-uv" id="valUV">--</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">Bộ gốc (Ag, Bg)</span>
+                <div class="dash-value val-ab" id="valBase">--</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">Hệ số nhân k</span>
+                <div class="dash-value val-k" id="valK">--</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">Kiểm tra A, B</span>
+                <div class="dash-value val-c" id="valCheckEuclid">--</div>
+            </div>
+        </div>
+
+        <div class="dashboard" id="dashboardBrute">
+            <div class="dash-card">
+                <span class="dash-label">Vòng lặp A</span>
+                <div class="dash-value val-ab" id="valA">--</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">Vòng lặp B</span>
+                <div class="dash-value val-ab" id="valB">--</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">C = sqrt(A²+B²)</span>
+                <div class="dash-value val-c" id="valC">--</div>
+            </div>
+        </div>
+
+        <div id="statusText">Sẵn sàng mô phỏng.</div>
+
+        <div style="overflow-x: auto; max-height: 400px;">
+            <table class="data-table" id="simTable">
+                <thead>
+                    <tr>
+                        <th width="10%">Bước</th>
+                        <th width="20%">Trạng thái</th>
+                        <th width="30%">Tính toán / Kiểm tra</th>
+                        <th width="40%">Kết quả</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item"><span class="icon">📞</span> <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item"><span class="icon">🌐</span> <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- JS Logic ---
+    function openTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // GCD function
+    function gcd(a, b) {
+        while (b) { [a, b] = [b, a % b]; }
+        return a;
+    }
+
+    // --- Global Variables ---
+    let g_m = 0, g_n = 0;
+    let g_stepCount = 0;
+    let g_isRunning = false;
+    let g_algo = 'brute';
+    let g_generator = null;
+
+    function resetApp() {
+        g_isRunning = false;
+        document.getElementById('tableBody').innerHTML = '';
+        document.getElementById('inpM').disabled = false; 
+        document.getElementById('inpN').disabled = false;
+        document.getElementById('selAlgo').disabled = false;
+        document.getElementById('btnRun').disabled = false;
+        document.getElementById('btnStartStep').style.display = 'inline-block'; 
+        document.getElementById('btnNext').style.display = 'none';
+        document.getElementById('statusText').innerText = 'Sẵn sàng mô phỏng.';
+        
+        // Reset dashboard values
+        document.getElementById('valUV').innerText = '--';
+        document.getElementById('valBase').innerText = '--';
+        document.getElementById('valK').innerText = '--';
+        document.getElementById('valCheckEuclid').innerText = '--';
+        document.getElementById('valA').innerText = '--';
+        document.getElementById('valB').innerText = '--';
+        document.getElementById('valC').innerText = '--';
+
+        // Toggle Dashboard
+        g_algo = document.getElementById('selAlgo').value;
+        if (g_algo === 'euclid') {
+            document.getElementById('dashboardEuclid').style.display = 'grid';
+            document.getElementById('dashboardBrute').style.display = 'none';
+        } else {
+            document.getElementById('dashboardEuclid').style.display = 'none';
+            document.getElementById('dashboardBrute').style.display = 'grid';
+        }
+    }
+
+    function addRow(step, state, calc, result, type) {
+        const tbody = document.getElementById('tableBody');
+        const row = document.createElement('tr');
+        row.className = 'highlight-new';
+        if (type === 'found') row.className += ' row-found';
+        else if (type === 'skip') row.className += ' row-skip';
+        else if (type === 'calc') row.className += ' row-calc';
+
+        row.innerHTML = `<td>${step}</td><td>${state}</td><td>${calc}</td><td>${result}</td>`;
+        tbody.appendChild(row);
+        row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    // --- Generators ---
+
+    function* bruteForceGen(m, n) {
+        // Optimization for simulation: if range too big, warn
+        if (n - m > 100) {
+            alert("Khoảng cách M-N quá lớn để mô phỏng từng bước Vét cạn. Chỉ chạy 200 bước đầu.");
+        }
+        let limitSteps = 200;
+
+        for (let a = m; a <= n; a++) {
+            for (let b = m; b <= n; b++) {
+                g_stepCount++;
+                let cSq = a*a + b*b;
+                let c = Math.sqrt(cSq);
+                let isInt = Number.isInteger(c);
+                
+                document.getElementById('valA').innerText = a;
+                document.getElementById('valB').innerText = b;
+                document.getElementById('valC').innerText = isInt ? c : c.toFixed(2);
+
+                if (isInt) {
+                    addRow(g_stepCount, `A=${a}, B=${b}`, `${a}² + ${b}² = ${cSq} (${c}²)`, `✅ Nhận bộ (${a}, ${b}, ${c})`, 'found');
+                    yield;
+                } else {
+                    // Only show first few or interesting steps to avoid lag
+                    if (g_stepCount < 10 || g_stepCount % 50 === 0) {
+                        addRow(g_stepCount, `A=${a}, B=${b}`, `${cSq} không chính phương`, `Bỏ qua`, 'calc');
+                        yield;
+                    }
+                }
+                
+                if (g_stepCount > limitSteps) return;
+            }
+        }
+    }
+
+    function* euclidGen(m, n) {
+        let limitU = Math.floor(Math.sqrt(2 * n)) + 1;
+        
+        for (let u = 2; u <= limitU; u++) {
+            for (let v = 1; v < u; v++) {
+                g_stepCount++;
+                
+                let checkParity = (u - v) % 2 !== 0;
+                let checkGcd = gcd(u, v) === 1;
+                
+                document.getElementById('valUV').innerText = `(${u}, ${v})`;
+                document.getElementById('valBase').innerText = '--';
+                document.getElementById('valK').innerText = '--';
+                
+                if (checkParity && checkGcd) {
+                    let a_base = u*u - v*v;
+                    let b_base = 2*u*v;
+                    let c_base = u*u + v*v;
+                    
+                    document.getElementById('valBase').innerText = `(${a_base}, ${b_base})`;
+                    addRow(g_stepCount, `u=${u}, v=${v}`, `Thỏa mãn ĐK`, `Tạo gốc: ${a_base}, ${b_base}, ${c_base}`, 'calc');
+                    yield;
+
+                    // Optimization: Start k from where values might be >= M
+                    let k = Math.floor(m / Math.min(a_base, b_base)); 
+                    if (k < 1) k = 1;
+
+                    while (true) {
+                        let A = a_base * k;
+                        let B = b_base * k;
+                        let C = c_base * k;
+                        
+                        document.getElementById('valK').innerText = k;
+                        document.getElementById('valCheckEuclid').innerText = `(${A}, ${B})`;
+
+                        if (A > n || B > n) {
+                            addRow(g_stepCount, `k=${k}`, `A hoặc B > N (${n})`, `Dừng tăng k`, 'skip');
+                            yield;
+                            break; 
+                        }
+
+                        if (A >= m && B >= m && A <= n && B <= n) {
+                            addRow(g_stepCount, `k=${k}`, `Nhân bản: ${A}, ${B}`, `✅ Tìm thấy (${A}, ${B}, ${C})`, 'found');
+                            yield;
+                            // Check reverse if A != B (Euclid A can be diff B)
+                            if (A !== B) {
+                                addRow(g_stepCount, `k=${k}`, `Hoán vị`, `✅ Thêm bộ (${B}, ${A}, ${C})`, 'found');
+                                yield;
+                            }
+                        } else {
+                             // Only yield if close to range to show logic
+                             if (A > m - 100) {
+                                addRow(g_stepCount, `k=${k}`, `(${A}, ${B}) ngoài [${m}, ${n}]`, `Bỏ qua`, 'calc');
+                                yield;
+                             }
+                        }
+                        k++;
+                    }
+
+                } else {
+                    // Logic skip
+                    // addRow(g_stepCount, `u=${u}, v=${v}`, `Không thỏa ĐK`, `Bỏ qua`, 'skip');
+                    // yield; // Uncomment to show skipped steps
+                }
+            }
+        }
+    }
+
+    // --- Control Logic ---
+
+    function startStepMode() {
+        let m = parseInt(document.getElementById('inpM').value);
+        let n = parseInt(document.getElementById('inpN').value);
+        
+        if (!m || !n || m > n) { alert("Vui lòng nhập M <= N hợp lệ"); return; }
+        
+        resetApp();
+        
+        document.getElementById('inpM').disabled = true; 
+        document.getElementById('inpN').disabled = true;
+        document.getElementById('selAlgo').disabled = true;
+        document.getElementById('btnRun').disabled = true;
+        document.getElementById('btnStartStep').style.display = 'none';
+        
+        const btnNext = document.getElementById('btnNext');
+        btnNext.style.display = 'inline-block'; 
+        btnNext.disabled = false; 
+        
+        document.getElementById('statusText').innerText = "Đang chạy...";
+        
+        if (g_algo === 'brute') {
+            g_generator = bruteForceGen(m, n);
+        } else {
+            g_generator = euclidGen(m, n);
+        }
+    }
+
+    function nextStep() {
+        if (!g_generator) return;
+        let res = g_generator.next();
+        if (res.done) {
+            document.getElementById('btnNext').disabled = true;
+            document.getElementById('statusText').innerText = "Hoàn thành mô phỏng.";
+            addRow(g_stepCount, "KẾT THÚC", "-", "Đã duyệt hết.", "found");
+        }
+    }
+
+    function runAll() {
+        let m = parseInt(document.getElementById('inpM').value);
+        let n = parseInt(document.getElementById('inpN').value);
+        if (!m || !n || m > n) { alert("Input lỗi"); return; }
+        
+        resetApp();
+        g_stepCount = 0;
+        
+        // Simplified Run All logic (just finds results without generator overhead)
+        if (g_algo === 'brute') {
+            for (let a = m; a <= n; a++) {
+                for (let b = m; b <= n; b++) {
+                    let c = Math.sqrt(a*a + b*b);
+                    if (Number.isInteger(c)) {
+                        g_stepCount++;
+                        addRow(g_stepCount, `(${a}, ${b})`, `${a}² + ${b}² = ${c}²`, `Kết quả: ${a} ${b} ${c}`, 'found');
+                    }
+                }
+            }
+        } else {
+            let limitU = Math.floor(Math.sqrt(2 * n)) + 1;
+            for (let u = 2; u <= limitU; u++) {
+                for (let v = 1; v < u; v++) {
+                    if ((u - v) % 2 !== 0 && gcd(u, v) === 1) {
+                        let a_base = u*u - v*v;
+                        let b_base = 2*u*v;
+                        let k = 1;
+                        while(true) {
+                            let A = a_base * k;
+                            let B = b_base * k;
+                            let C = (u*u + v*v) * k;
+                            if (A > n || B > n) break;
+                            if (A >= m && B >= m) {
+                                g_stepCount++;
+                                addRow(g_stepCount, `u=${u}, v=${v}, k=${k}`, `(${A}, ${B}, ${C})`, `Kết quả`, 'found');
+                                if (A !== B) addRow(g_stepCount, `Hoán vị`, `(${B}, ${A}, ${C})`, `Kết quả`, 'found');
+                            }
+                            k++;
+                        }
+                    }
+                }
+            }
+        }
+        document.getElementById('statusText').innerText = "Đã tìm xong.";
+    }
+
+</script>
+
+<script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</body>
+</html>
