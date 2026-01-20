@@ -26,7 +26,6 @@ void sangthuong(long long m, long long n){
     for(long long i = m+1; i<n; ++i){
         if(snt[i]) cout << i << " ";
     }
-
 }
 long long m,n;
 int main()
