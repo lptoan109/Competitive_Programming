@@ -1,53 +1,41 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int MAXN = 15;
-int checkc[MAXN+5], checkmatrix[MANX+5][MAXN+5];
-int n, sl;
-bool check(int posi, int posj){
-    if(posi < n&&posj < n){
-        for(int i = posi; i<=n; ++i){
-            for(int j = posj; j<=n; ++j){
-                if(checkmatrix){
-                    return false;
-                }
-            }
-        }
+int n,x[20];
+bool h[20],c1[40],c2[40];
+void xuat() {
+    for (int i = 1; i <= n; i++) {
+        cout << x[i] << " ";
     }
-    if(posi>1&&posj>1){
-        for(int i = pos; i>=1; i--){
-            for(int j = posj; j>=1; j--){
-                if(checkmatrix){
-                    return false;
-                }
-            }
-        }
-    }
-    return true;
+    cout << "\n";
 }
-void xephau(int i, int j){
-    if(j>n) xephau(i-1, 1);
-    for(int u = i; u<=n; ++u){
-        for(int v = j; v<=n; ++v){
-            checkmatrix[u][v] = true;
-            checkc[u] = true;
-            if(check(u, v) == false || checkc = true){
-                checkmatrix[u][v] = false;
-                checkc[u] = false;
-                xephau(u,v+1);
-            }
-            sl++;
+void Try(int i) {
+    for (int j = 1; j <= n; j++) {
+        // Kiểm tra xem cột j và các đường chéo có bị ăn hay không
+        if (!h[j] && !c1[i - j + n] && !c2[i + j]) {
+            x[i] = j;           // Đặt quân hậu hàng i vào cột j
 
-            if(sl>=n){
-                cout <<
+            // Đánh dấu trạng thái
+            h[j] = true;
+            c1[i - j + n] = true;
+            c2[i + j] = true;
+
+            if (i == n) {
+                xuat();         // Đã đặt xong n quân hậu
+            } else {
+                Try(i + 1);     // Thử tiếp cho hàng i + 1
             }
+
+            // QUAY LUI: Trả lại trạng thái ban đầu để thử các trường hợp khác
+            h[j] = false;
+            c1[i - j + n] = false;
+            c2[i + j] = false;
         }
     }
 }
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
-    freopen("DQ08.INP", "r", stdin);
-    freopen("DQ08.OUT", "w", stdout);
+    cin >> n
+    Try(1);
     return 0;
 }
