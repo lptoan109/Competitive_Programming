@@ -9,44 +9,29 @@
 using namespace std;
 
 // --- PHẦN 1: THUẬT TOÁN CHUẨN (Để sinh file .OUT) ---
-const int MAX_VAL = 20000005;
-bool is_prime[MAX_VAL];
-
-void sieve() {
-    fill(is_prime, is_prime + MAX_VAL, true);
-    is_prime[0] = is_prime[1] = false;
-    for (int i = 2; i * i < MAX_VAL; ++i) {
-        if (is_prime[i]) {
-            for (int j = i * i; j < MAX_VAL; j += i)
-                is_prime[j] = false;
+bool sub2(long long kq, string s, int gh){
+    bool check = false;
+    if(s[gh-1]=='0'||s[gh-1]=='5'){
+        long long mod = 0;
+        for(int j = 0; j<gh-1; ++j){
+            mod = (mod+(s[j]-'0'))%5;
         }
+        if(mod == 0) check = true;
     }
+    return check;
 }
-
 void solve(string inp_path, string out_path) {
     ifstream cin(inp_path);
     ofstream cout(out_path);
-
-    int n, m;
-    if (!(cin >> n >> m)) return;
-
-    vector<long long> diff(n + 2, 0);
-    for (int i = 0; i < m; ++i) {
-        int l, r, v;
-        cin >> l >> r >> v;
-        diff[l] += v;
-        diff[r + 1] -= v;
+    long long n, kq = 0;
+    cin >> n;
+    for(int i = 0; i<n; ++i){
+        string s;
+        cin >> s;
+        int gh = s.size();
+        if(sub2(kq,s,gh)) kq++;
     }
-
-    int count = 0;
-    long long current_val = 0;
-    for (int i = 1; i <= n; ++i) {
-        current_val += diff[i];
-        if (current_val >= 0 && current_val < MAX_VAL) {
-            if (is_prime[current_val]) count++;
-        }
-    }
-    cout << count;
+    cout << kq;
 }
 
 // --- PHẦN 2: SINH DỮ LIỆU NGẪU NHIÊN ---
@@ -54,23 +39,21 @@ long long randRange(long long l, long long r) {
     return l + rand() % (r - l + 1);
 }
 
-void make_test(int test_num, int n_max, int m_max, int v_max) {
+void make_test(int test_num) {
     string folder = "Test" + (test_num < 10 ? string("0") : "") + to_string(test_num);
     _mkdir(folder.c_str());
 
-    string inp = folder + "/KHOIPHUC.INP";
-    string out = folder + "/KHOIPHUC.OUT";
+    string inp = folder + "/BAI1.INP";
+    string out = folder + "/BAI1.OUT";
 
     // Sinh file INP
     ofstream fout(inp);
-    int n = randRange(n_max / 2, n_max);
-    int m = randRange(m_max / 2, m_max);
-    fout << n << " " << m << "\n";
-    for (int i = 0; i < m; ++i) {
-        int l = randRange(1, n);
-        int r = randRange(l, n);
-        int v = randRange(1, v_max);
-        fout << l << " " << r << " " << v << "\n";
+    int n = randRange(1, 100);
+    int m = randRange(100000, 100000);
+    fout << n << "\n";
+    for (int i = 0; i < n; ++i){
+        for(int j = 1; j<=m; ++j) fout << 5;
+        fout << "\n";
     }
     fout.close();
 
@@ -80,16 +63,9 @@ void make_test(int test_num, int n_max, int m_max, int v_max) {
 }
 
 int main() {
-    srand(time(0));
-    cout << "Starting sieve... " << endl;
-    sieve();
-    cout << "Sieve done. Generating tests..." << endl;
-
     // Phân bổ Subtask
-    for (int i = 1; i <= 10; ++i) make_test(i, 1000, 1000, 10);      // Sub 1
-    for (int i = 11; i <= 20; ++i) make_test(i, 50000, 50000, 50);   // Sub 2
-    for (int i = 21; i <= 30; ++i) make_test(i, 200000, 200000, 100); // Sub 3
+    for (int i = 1; i <= 10; ++i) make_test(i);      // Sub 1
 
-    cout << "DONE! 30 tests are ready for Themis." << endl;
+    cout << "DONE! 10 tests are ready for Themis." << endl;
     return 0;
 }
