@@ -1,24 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
-long long n, s, t[10001], res[10001], best[10001];
-int min_count = 1e9;
-void solve(int i, long long sum, int count) {
-    if (count >= min_count) return;
 
-    if (sum == s) {
-        min_count = count;
-        for (int j = 1; j <= count; j++) best[j] = res[j];
+int n;
+long long s, t[10005], best_res[10005], temp_res[10005];
+int min_coins = INT_MAX;
+
+void solve(int idx, long long current_s, int count) {
+    if (count >= min_coins) return;
+    if (current_s == s) {
+        min_coins = count;
+        for (int i = 0; i < count; i++) best_res[i] = temp_res[i];
         return;
     }
+    if (idx > n || current_s > s) return;
 
-    if (i > n || sum > s) return;
+    if (current_s + (min_coins - count) * t[idx] < s) return;
 
-    if (sum + t[i] <= s) {
-        res[count + 1] = t[i];
-        solve(i + 1, sum + t[i], count + 1);
+    if (current_s + t[idx] <= s) {
+        temp_res[count] = t[idx];
+        solve(idx + 1, current_s + t[idx], count + 1);
     }
-
-    solve(i + 1, sum, count);
+    solve(idx + 1, current_s, count);
 }
 
 int main() {
@@ -34,12 +36,10 @@ int main() {
 
     solve(1, 0, 0);
 
-    if (min_count == 1e9) cout << -1 << "\n";
+    if (min_coins == INT_MAX) cout << -1;
     else {
-        cout << min_count << "\n";
-        for (int i = 1; i <= min_count; i++)
-            cout << best[i] << (i == min_count ? "" : " ");
-        cout << "\n";
+        cout << min_coins << "\n";
+        for (int i = 0; i < min_coins; i++) cout << best_res[i] << " ";
     }
 
     return 0;

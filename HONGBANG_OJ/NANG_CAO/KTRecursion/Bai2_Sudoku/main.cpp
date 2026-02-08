@@ -1,39 +1,44 @@
 #include <bits/stdc++.h>
 using namespace std;
-int board[9][9], cnt = 0;
-bool row[9][10], col[9][10], block[9][10];
+
+int a[9][9], cnt = 0;
 bool found = false;
-void print_board() {
-    if (cnt > 1) cout << "\n";
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-            cout << board[i][j] << (j == 8 ? "" : " ");
-        }
-        cout << "\n";
-    }
+
+bool check(int r, int c, int v) {
+    for (int i = 0; i < 9; i++)
+        if (a[r][i] == v || a[i][c] == v) return false;
+    int sr = (r / 3) * 3, sc = (c / 3) * 3;
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            if (a[sr + i][sc + j] == v) return false;
+    return true;
 }
+
 void solve(int r, int c) {
     if (cnt >= 1000) return;
-    if (c == 9){
+    if (r == 9) {
+        if (cnt > 0) cout << "\n";
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) cout << a[i][j] << " ";
+            cout << "\n";
+        }
         cnt++;
         found = true;
-        print_board();
         return;
     }
-    int next_r = (r + 1 == 9) ? 0 : r + 1;
-    int next_c = (r + 1 == 9) ? c + 1 : c;
-    if (board[r][c] != 0) {
-        solve(next_r, next_c);
+
+    int nr = (c == 8) ? r + 1 : r;
+    int nc = (c == 8) ? 0 : c + 1;
+
+    if (a[r][c] != 0) {
+        solve(nr, nc);
     } else {
         for (int v = 1; v <= 9; v++) {
-            int b = (r / 3) * 3 + (c / 3);
-            if (!row[r][v] && !col[c][v] && !block[b][v]) {
-                board[r][c] = v;
-                row[r][v] = col[c][v] = block[b][v] = true;
-                solve(next_r, next_c);
-                board[r][c] = 0;
-                row[r][v] = col[c][v] = block[b][v] = false;
+            if (check(r, c, v)) {
+                a[r][c] = v;
+                solve(nr, nc);
                 if (cnt >= 1000) return;
+                a[r][c] = 0;
             }
         }
     }
@@ -44,18 +49,18 @@ int main() {
     cin.tie(0);
     freopen("SUDOKU.INP", "r", stdin);
     freopen("SUDOKU.OUT", "w", stdout);
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-            if (!(cin >> board[i][j])) break;
-            if (board[i][j] != 0) {
-                int v = board[i][j];
-                row[i][v] = true;
-                col[j][v] = true;
-                block[(i / 3) * 3 + (j / 3)][v] = true;
-            }
+
+    char ch;
+    int r = 0, c = 0;
+    while (cin >> ch && r < 9) {
+        if (isdigit(ch)) {
+            a[r][c++] = ch - '0';
+            if (c == 9) { c = 0; r++; }
         }
     }
+
     solve(0, 0);
-    if (!found) cout << "No" << "\n";
+    if (!found) cout << "No";
+
     return 0;
 }
