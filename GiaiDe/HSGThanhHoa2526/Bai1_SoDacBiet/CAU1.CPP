@@ -12,12 +12,12 @@ void sub1(){
     cout << kq;
 }
 void sub2(){
-    int a[5];
+    long long a[5];
     a[1] = 1;
     a[2] = 4;
     a[3] = 6;
     a[4] = 9;
-    int lt = l%10, rt = r%10, vtl=0, vtr = 0;
+    long long lt = l%10, rt = r%10, vtl=0, vtr = 0;
     long long kq = ((r-rt)-(l-lt))/10*4;
     for(int i = 1; i<=4; ++i){
         if(lt>a[i]) vtl = i;

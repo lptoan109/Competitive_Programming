@@ -33,6 +33,8 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="CAU2.CPP" />
+		<Unit filename="CAU2.INP" />
+		<Unit filename="CAU2.OUT" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

@@ -11,10 +11,15 @@ int main()
     while(t--){
         string s;
         cin >> s;
-        int gh = s.size();
-        for(int i = 0; i<gh; ++i){
-
+        int kq = -1, cur = 0;
+        for(char i:s){
+            if(i=='A'||i=='N'||i=='H') cur = 0;
+            else{
+                cur++;
+                kq = max(cur,kq);
+            }
         }
+        cout << kq << "\n";
     }
     return 0;
 }
