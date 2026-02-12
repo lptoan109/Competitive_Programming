@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Bai1_TrungBinhCong" />
+		<Option title="Bai1_SoDoiXung" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/Bai1_TrungBinhCong" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/Bai1_SoDoiXung" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -16,7 +16,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/Bai1_TrungBinhCong" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/Bai1_SoDoiXung" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -32,9 +32,9 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="TBC.INP" />
-		<Unit filename="TBC.OUT" />
-		<Unit filename="main.cpp" />
+		<Unit filename="DUALPAL.CPP" />
+		<Unit filename="DUALPAL.INP" />
+		<Unit filename="DUALPAL.OUT" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

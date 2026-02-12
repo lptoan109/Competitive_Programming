@@ -1,13 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int MAXN = 1e6;
-bool check(int k){
-    if(k==2||k==3) return true;
-    if(k%2==0||k%3==0||k<2) return false;
-    for(int i = 2; i*i<=k; i+=5){
-        if(k%i==0||k%(i+2)==0) return false;
+const int MAXN = 1e6, MAXV = 1e7;
+bool notsnt[MAXV];
+void sang(){
+    notsnt[0] = notsnt[1] = true;
+    for(int i = 2; i*i<=MAXV; ++i){
+        if(!notsnt[i]){
+            for(int j = i*i; j<=MAXV; j+=i){
+                notsnt[j] = true;
+            }
+        }
     }
-    return true;
 }
 int n,q,a[MAXN+5];
 int main()
@@ -17,11 +20,11 @@ int main()
     freopen("NGUYENTO.INP", "r", stdin);
     freopen("NGUYENTO.OUT", "w", stdout);
     cin >> n >> q;
+    sang();
     for(int i = 1; i<=n; ++i){
         int t;
         cin >> t;
-        bool c = check(t);
-        if(c==false){
+        if(t<2||notsnt[t]==true){
             a[i] = 0;
             continue;
         }
@@ -32,7 +35,7 @@ int main()
                 so = so*10+cs;
                 t/=10;
             }
-            if(check(so)) a[i]++;
+            if(!notsnt[so]) a[i]++;
         }
     }
     int ps[n+1];
