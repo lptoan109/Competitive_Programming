@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 string s;
-int mr(string s,int l, int r){
+int checkdx(string s,int l, int r){
     int gh = s.size();
     while(l>=0&&r<gh&&s[l]==s[r]){
         l--;

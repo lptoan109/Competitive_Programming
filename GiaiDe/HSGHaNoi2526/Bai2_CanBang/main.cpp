@@ -17,6 +17,8 @@ int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
+    freopen("CANBANG.INP", "r", stdin);
+    freopen("CANBANG.OUT", "w", stdout);
     cin >> n >> k;
     for(int i = 1; i<=n; ++i){
         cin >> a[i];
