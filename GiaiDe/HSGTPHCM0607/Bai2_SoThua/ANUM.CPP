@@ -2,13 +2,17 @@
 using namespace std;
 long long n;
 void sub1(){
-    bool ct = true;
     long long k = n+1;
     while(1){
         long long t = 1;
-        for(int i = 2; i*i<k; ++i){
-            t+=i;
-            if(i!=k/i) t+=k/i;
+        for(long long i = 2; i*i<k; ++i){
+            if(k%i!=0){
+                continue;
+            }
+            if(k%i==0){
+                t+=i;
+                if(i!=k/i) t+=k/i;
+            }
             if(t>k){
                 cout << k;
                 return;
@@ -28,10 +32,6 @@ int main()
     freopen("ANUM.INP", "r", stdin);
     freopen("ANUM.OUT", "w", stdout);
     cin >> n;
-    int li = 1e9;
-    if(n<=li){
-        sub1();
-        return 0;
-    }
+    sub1();
     return 0;
 }
