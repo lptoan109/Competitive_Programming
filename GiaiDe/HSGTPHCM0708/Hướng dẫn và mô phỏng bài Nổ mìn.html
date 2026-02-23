@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 2: Nổ mìn - Hướng dẫn & Mô phỏng</title>
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --color-primary: #0284c7; 
+            --color-secondary: #38bdf8; 
+            --color-accent: #f59e0b; 
+            --color-success: #10b981; 
+            --color-dark: #0c4a6e; 
+            --bg-color: #f0f9ff; 
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px; line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background-color: var(--color-dark); color: #e0f2fe; padding: 15px; text-align: center;
+            border-radius: 12px 12px 0 0; border-bottom: 5px solid var(--color-accent);
+        }
+        .main-title {
+            margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px; color: #fbbf24;
+        }
+
+        .tabs { display: flex; background-color: #e2e8f0; margin-bottom: 0; }
+        .tab-btn {
+            flex: 1; padding: 18px; border: none; background: #cbd5e1;
+            cursor: pointer; font-size: 16px; font-weight: 700; color: #64748b;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--card-bg); color: var(--color-primary); 
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 30px;
+            min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        .section-header {
+            font-size: 1.4rem; font-weight: bold; margin: 30px 0 20px 0;
+            padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; color: var(--color-dark);
+        }
+
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+        .border-blue { border-left: 6px solid #0284c7; }
+        .border-orange { border-left: 6px solid var(--color-accent); }
+        .border-green { border-left: 6px solid var(--color-success); }
+
+        .step-badge {
+            position: absolute; top: -14px; left: 20px; color: white;
+            padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: #0284c7; }
+        .bg-orange { background-color: var(--color-accent); color: #000; }
+        .bg-green { background-color: var(--color-success); }
+
+        .code-block {
+            background-color: var(--code-bg); color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace; font-size: 15px;
+            line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow-x: auto; white-space: pre; border-left: 5px solid var(--color-primary);
+        }
+        .code-block .kw { color: #38bdf8; font-weight: bold; }
+        .code-block .var { color: #e4e121; font-weight: bold; }
+        .code-block .val { color: #ff4d4d; font-weight: bold; }
+        .code-block .cmt { color: #9e9e9e; font-style: italic; }
+
+        .control-panel {
+            background-color: #f0f9ff; padding: 25px; border-radius: 12px;
+            display: flex; gap: 15px; margin-bottom: 25px; border: 2px solid #bae6fd; align-items: center;
+        }
+        input { padding: 10px; border: 2px solid #7dd3fc; border-radius: 8px; font-size: 1rem; width: 300px; }
+
+        button.action-btn {
+            padding: 12px 24px; color: white; border: none; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+        }
+        .btn-init { background-color: var(--color-primary); }
+        .btn-step { background-color: var(--color-accent); color: #000; }
+
+        .sim-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .log-area {
+            background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px;
+            height: 500px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+
+        .teacher-footer {
+            background-color: var(--color-dark); color: #cffafe; padding: 25px 10px;
+            margin-top: 0; border-top: 5px solid var(--color-accent); text-align: center;
+            border-radius: 0 0 16px 16px;
+        }
+        .footer-title { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: var(--color-accent); }
+        .footer-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 1.05rem; }
+        .footer-item { display: flex; align-items: center; gap: 10px; color: #cffafe; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 8px;}
+        .footer-item:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-2px); }
+        
+        .viz-container { display: flex; gap: 10px; justify-content: center; margin: 20px 0; align-items: flex-end; height: 150px; }
+        .viz-bar { width: 40px; background: var(--color-primary); transition: all 0.3s; position: relative; display: flex; justify-content: center; align-items: flex-start; color: white; padding-top: 5px; font-weight: bold; }
+        .viz-bar.destroyed { background: #e2e8f0; color: #64748b; }
+        .viz-bar.active-expl { background: var(--color-accent); color: black; box-shadow: 0 0 15px var(--color-accent); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 2: Nổ Mìn (NOMIN)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Thuật Toán</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        <h2 class="section-header">1. Phân tích yêu cầu</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Quy tắc lan truyền</span>
+            <p>Mìn phá hủy các vật lân cận nếu chiều cao của chúng <b>nhỏ hơn</b> chiều cao vật vừa bị phá hủy. Quá trình lan truyền sẽ dừng lại ngay khi gặp một vật có chiều cao <b>lớn hơn hoặc bằng</b> vật vừa nổ.</p>
+        </div>
+
+        <h2 class="section-header">2. Thuật toán tối ưu $O(N)$ - Phương pháp tìm đỉnh</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Giải thích chi tiết</span>
+            <p>Để tối thiểu số lần nổ, ta cần kích nổ tại các "ngọn núi" để mìn lan tỏa xuống hai bên thung lũng. Tuy nhiên, do quy tắc "không lan qua vật bằng nhau", ta có một chiến thuật đơn giản hơn:</p>
+            <ul>
+                <li>Duyệt dãy từ trái qua phải. Mỗi lần gặp một vật mới, ta tính là 1 lần nổ.</li>
+                <li>Sử dụng vòng lặp để "nuốt trọn" một chuỗi lan truyền (gồm một đoạn tăng dần và sau đó là một đoạn giảm dần).</li>
+                <li>Toàn bộ chuỗi "Tăng - Đỉnh - Giảm" này chỉ tốn đúng 1 lần nổ tại vị trí Đỉnh.</li>
+            </ul>
+        </div>
+
+        <h2 class="section-header">3. Ví dụ minh họa và Mã giả</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Ví dụ: 1 2 2 2 1</span>
+            <p>Phân tích các bước của thuật toán trên dãy này:</p>
+            <ul>
+                <li><b>Nổ lần 1:</b> Xét vị trí 1 ($H=1$). Tăng biến đếm lên 1. Đoạn tăng/giảm dừng ngay vì $H_2 > H_1$.</li>
+                <li><b>Nổ lần 2:</b> Xét vị trí 2 ($H=2$). Tăng biến đếm lên 2. Dừng vì $H_3$ không lớn hơn $H_2$.</li>
+                <li><b>Nổ lần 3:</b> Xét vị trí 3 ($H=2$). Tăng biến đếm lên 3. Dừng vì $H_4$ không lớn hơn $H_3$ nên biến đếm sẽ tăng bằng $N$. Vòng lặp kết thúc</li>
+            </ul>
+            <p>$\implies$ Kết quả: 3 lần nổ.</p>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Mã giả Tiếng Việt</span>
+            <div class="code-block">
+<span class="kw">Nhập</span> <span class="var">N</span> và <span class="var">mảng_H</span>;
+<span class="var">i</span> = <span class="val">0</span>, <span class="var">so_lan_no</span> = <span class="val">0</span>;
+
+<span class="kw">Trong khi</span> (<span class="var">i</span> < <span class="var">N</span>):
+    <span class="var">so_lan_no</span>++;
+    <span class="cmt">// 1. Bỏ qua đoạn chiều cao tăng dần (lan truyền ngược)</span>
+    <span class="kw">Trong khi</span> (<span class="var">i</span> < <span class="var">N</span> - <span class="val">1</span> và <span class="var">H</span>[<span class="var">i</span>] < <span class="var">H</span>[<span class="var">i+1</span>]):
+        <span class="var">i</span>++;
+    <span class="cmt">// 2. Bỏ qua đoạn chiều cao giảm dần (lan truyền xuôi)</span>
+    <span class="kw">Trong khi</span> (<span class="var">i</span> < <span class="var">N</span> - <span class="val">1</span> và <span class="var">H</span>[<span class="var">i</span>] > <span class="var">H</span>[<span class="var">i+1</span>]):
+        <span class="var">i</span>++;
+    
+    <span class="var">i</span>++; <span class="cmt">// Chuyển sang vị trí tiếp theo sau chuỗi lan truyền</span></div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <div class="control-panel">
+            <label><b>Dãy chiều cao:</b></label> 
+            <input type="text" id="inpHeights" value="1 2 5 4 3 3 6 6 2" placeholder="Ví dụ: 1 2 2 2 1">
+            <button class="action-btn btn-init" onclick="initSim()">🚀 Khởi tạo</button>
+            <button class="action-btn btn-step" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+        <div class="sim-layout">
+            <div class="step-card">
+                <h3>Trực quan hóa</h3>
+                
+                <div id="vizContainer" class="viz-container"></div>
+                <hr>
+                <p>Số lần nổ: <b id="resCount" class="val">0</b></p>
+                <p>Trạng thái: <b id="simStatus" class="val">Chờ khởi tạo</b></p>
+            </div>
+            <div class="log-area" id="logArea"></div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item">📞 <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item">🌐 <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    let h = [];
+    let explosionCount = 0;
+    let simGenerator = null;
+
+    function log(msg, color="#d4d4d4") {
+        const area = document.getElementById('logArea');
+        area.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function renderViz(activeIdx = -1, destroyedIndices = []) {
+        const container = document.getElementById('vizContainer');
+        container.innerHTML = "";
+        h.forEach((val, idx) => {
+            const bar = document.createElement('div');
+            bar.className = 'viz-bar';
+            bar.style.height = (val * 20) + 'px';
+            bar.innerText = val;
+            if (destroyedIndices.includes(idx)) bar.classList.add('destroyed');
+            if (idx === activeIdx) bar.classList.add('active-expl');
+            container.appendChild(bar);
+        });
+    }
+
+    function* solveSim() {
+        let n = h.length;
+        let destroyed = [];
+        let i = 0;
+        explosionCount = 0;
+
+        while (i < n) {
+            explosionCount++;
+            let currentExplosionStart = i;
+            destroyed.push(i);
+            
+            document.getElementById('resCount').innerText = explosionCount;
+            log(`Lần nổ ${explosionCount}: Bắt đầu tại vật thứ ${i + 1} (H=${h[i]})`, "#fbbf24");
+            renderViz(i, destroyed);
+            yield;
+
+            // Đoạn tăng
+            while (i < n - 1 && h[i] < h[i + 1]) {
+                i++;
+                destroyed.push(i);
+                log(`&nbsp;&nbsp;Lan truyền (Tăng): Phá hủy vật ${i + 1} (H=${h[i]})`, "#10b981");
+                renderViz(currentExplosionStart, destroyed);
+                yield;
+            }
+
+            // Đoạn giảm
+            while (i < n - 1 && h[i] > h[i + 1]) {
+                i++;
+                destroyed.push(i);
+                log(`&nbsp;&nbsp;Lan truyền (Giảm): Phá hủy vật ${i + 1} (H=${h[i]})`, "#10b981");
+                renderViz(currentExplosionStart, destroyed);
+                yield;
+            }
+            
+            i++;
+        }
+        log(`HOÀN THÀNH: Tổng cộng ${explosionCount} lần nổ.`, "#38bdf8");
+        document.getElementById('simStatus').innerText = "Hoàn thành";
+    }
+
+    function initSim() {
+        const input = document.getElementById('inpHeights').value.trim();
+        if (!input) return;
+        h = input.split(/\s+/).map(Number);
+        
+        document.getElementById('logArea').innerHTML = "";
+        document.getElementById('resCount').innerText = "0";
+        document.getElementById('simStatus').innerText = "Đang chạy...";
+        document.getElementById('btnStep').disabled = false;
+        
+        renderViz();
+        simGenerator = solveSim();
+    }
+
+    function nextStep() {
+        if (simGenerator && !simGenerator.next().done);
+        else document.getElementById('btnStep').disabled = true;
+    }
+</script>
+</body>
+</html>

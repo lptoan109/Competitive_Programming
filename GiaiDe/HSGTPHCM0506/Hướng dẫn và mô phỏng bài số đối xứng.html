@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 1: Số đối xứng - Hướng dẫn & Mô phỏng</title>
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --color-primary: #0284c7; 
+            --color-secondary: #38bdf8; 
+            --color-accent: #f59e0b; 
+            --color-success: #10b981; 
+            --color-dark: #0c4a6e; 
+            --bg-color: #f0f9ff; 
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px; line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background-color: var(--color-dark); color: #e0f2fe; padding: 15px; text-align: center;
+            border-radius: 12px 12px 0 0; border-bottom: 5px solid var(--color-accent);
+        }
+        .main-title {
+            margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px; color: #fbbf24;
+        }
+
+        .tabs { display: flex; background-color: #e2e8f0; margin-bottom: 0; }
+        .tab-btn {
+            flex: 1; padding: 18px; border: none; background: #cbd5e1;
+            cursor: pointer; font-size: 16px; font-weight: 700; color: #64748b;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--card-bg); color: var(--color-primary); 
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 30px;
+            min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        .section-header {
+            font-size: 1.4rem; font-weight: bold; margin: 30px 0 20px 0;
+            padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; color: var(--color-dark);
+        }
+
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+        .border-blue { border-left: 6px solid #0284c7; }
+        .border-orange { border-left: 6px solid var(--color-accent); }
+        .border-green { border-left: 6px solid var(--color-success); }
+
+        .step-badge {
+            position: absolute; top: -14px; left: 20px; color: white;
+            padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: #0284c7; }
+        .bg-orange { background-color: var(--color-accent); color: #000; }
+        .bg-green { background-color: var(--color-success); }
+
+        .math-formula {
+            background-color: #f0f9ff; padding: 15px; border-radius: 8px;
+            text-align: center; font-size: 1.2em; color: var(--color-dark); 
+            border: 1px dashed var(--color-primary); margin: 15px 0;
+        }
+
+        .code-block {
+            background-color: var(--code-bg); color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace; font-size: 15px;
+            line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow-x: auto; white-space: pre; border-left: 5px solid var(--color-primary);
+        }
+        .code-block .kw { color: #38bdf8; font-weight: bold; }
+        .code-block .var { color: #e4e121; font-weight: bold; }
+        .code-block .val { color: #ff4d4d; font-weight: bold; }
+        .code-block .cmt { color: #9e9e9e; font-style: italic; }
+
+
+        /* Simulation */
+        .control-panel {
+            background-color: #f0f9ff; padding: 25px; border-radius: 12px;
+            display: flex; gap: 15px; margin-bottom: 25px; border: 2px solid #bae6fd; align-items: center;
+        }
+        input { padding: 10px; border: 2px solid #7dd3fc; border-radius: 8px; font-size: 1rem; }
+
+        button.action-btn {
+            padding: 12px 24px; color: white; border: none; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+        }
+        .btn-init { background-color: var(--color-primary); }
+        .btn-step { background-color: var(--color-accent); color: #000; }
+        button:disabled { background-color: #cbd5e1 !important; cursor: not-allowed; }
+
+        .sim-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .log-area {
+            background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px;
+            height: 500px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+
+        /* Footer thống nhất */
+        .teacher-footer {
+            background-color: var(--color-dark); color: #cffafe; padding: 25px 10px;
+            margin-top: 0; border-top: 5px solid var(--color-accent); text-align: center;
+            border-radius: 0 0 16px 16px;
+        }
+        .footer-title { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: var(--color-accent); }
+        .footer-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 1.05rem; }
+        .footer-item { display: flex; align-items: center; gap: 10px; color: #cffafe; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 8px;}
+        .footer-item:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 1: Số Đối Xứng (Dual Palindromes)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Thuật Toán</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        <h2 class="section-header">1. Phân tích đề bài</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Phân tích</span>
+            <p>Tìm $N$ số đầu tiên lớn hơn $S$ thỏa mãn: Khi biểu diễn ở ít nhất hai hệ cơ số $c$ ($2 \le c \le 16$), số đó là số đối xứng.</p>
+        </div>
+
+        <h2 class="section-header">2. Thuật toán chuyển đổi hệ cơ số</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Các bước thực hiện</span>
+            <p>Để chuyển số $X$ từ hệ thập phân sang hệ $B$:</p>
+            <ul>
+                <li><b>Bước 1:</b> Lấy $X \pmod B$ để tìm chữ số dư cuối cùng.</li>
+                <li><b>Bước 2:</b> Cập nhật $X = \lfloor X / B \rfloor$.</li>
+                <li><b>Bước 3:</b> Lặp lại cho đến khi $X = 0$.</li>
+                <li><b>Bước 4:</b> Đảo ngược thứ tự các số dư thu được.</li>
+            </ul>
+            <p><b>Ví dụ:</b> Đổi $13$ sang hệ $2$:</p>
+            <div class="math-formula">
+                $13 \div 2 = 6$ dư $1$ | $6 \div 2 = 3$ dư $0$ | $3 \div 2 = 1$ dư $1$ | $1 \div 2 = 0$ dư $1$ <br>
+                Kết quả: $1101_2$
+            </div>
+        </div>
+
+        <h2 class="section-header">3. Mã giả C++ (Hàm kiểm tra)</h2>
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Cấu trúc hàm</span>
+            <div class="code-block">
+<span class="kw">void</span> <span class="var">DecToAny</span>(<span class="kw">long long</span> n, <span class="kw">int</span> base) {
+    <span class="var">d</span> = 0;
+    <span class="kw">while</span> (n > 0) {
+        <span class="var">cs</span>[<span class="var">d</span>++] = n % base;
+        n /= base;
+    }
+}
+
+<span class="kw">bool</span> <span class="var">KTDX</span>() {
+    <span class="kw">for</span> (<span class="kw">int</span> i = 0; i < <span class="var">d</span>/2; i++)
+        <span class="kw">if</span> (<span class="var">cs</span>[i] != <span class="var">cs</span>[<span class="var">d</span>-i-1]) <span class="kw">return</span> <span class="val">false</span>;
+    <span class="kw">return</span> <span class="val">true</span>;
+}</div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <div class="control-panel">
+            <label><b>N:</b></label> <input type="number" id="inpN" value="3" style="width:70px;">
+            <label><b>S:</b></label> <input type="number" id="inpS" value="25" style="width:90px;">
+            <button class="action-btn btn-init" onclick="initSim()">🚀 Khởi tạo</button>
+            <button class="action-btn btn-step" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+        <div class="sim-layout">
+            <div class="step-card">
+                <h3>Kết quả hiện tại</h3>
+                <p>Số đang xét: <b id="vNum" class="val">-</b></p>
+                <p>Đã tìm được: <b id="vCount" class="val">0</b> / <span id="vTarget">0</span></p>
+                <div id="resBox" style="font-weight:bold; color:var(--color-primary); min-height: 50px; border: 1px solid #eee; padding: 10px;">-</div>
+                <p>Số lượng SNT: <b id="vSNT" class="val">0</b></p>
+            </div>
+            <div class="log-area" id="logArea">Chưa có dữ liệu...</div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item">📞 <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item">🌐 <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    let n, s, currentNum, foundCount, sntCount, results = [], simulator = null;
+
+    function isPalindrome(arr) {
+        for(let i=0; i < arr.length/2; i++) {
+            if(arr[i] !== arr[arr.length-1-i]) return false;
+        }
+        return true;
+    }
+
+    function convertBase(num, base) {
+        let res = [];
+        let temp = num;
+        while(temp > 0) {
+            res.push(temp % base);
+            temp = Math.floor(temp / base);
+        }
+        return res;
+    }
+
+    function isPrime(num) {
+        if(num < 2) return false;
+        for(let i=2; i <= Math.sqrt(num); i++) {
+            if(num % i === 0) return false;
+        }
+        return true;
+    }
+
+    function log(msg, color="#d4d4d4") {
+        const area = document.getElementById('logArea');
+        area.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function* mainSim() {
+        while(foundCount < n) {
+            currentNum++;
+            document.getElementById('vNum').innerText = currentNum;
+            log(`Kiểm tra số ${currentNum}...`, "#38bdf8");
+            
+            let dxCount = 0;
+            for(let b=2; b<=16; b++) {
+                let baseArr = convertBase(currentNum, b);
+                if(isPalindrome(baseArr)) {
+                    dxCount++;
+                    log(`&nbsp;&nbsp;+ Đối xứng ở hệ ${b}: [${baseArr.slice().reverse().join(",")}]`, "#10b981");
+                }
+                if(dxCount >= 2) {
+                    foundCount++;
+                    results.push(currentNum);
+                    let snt = isPrime(currentNum);
+                    if(snt) sntCount++;
+                    
+                    document.getElementById('vCount').innerText = foundCount;
+                    document.getElementById('resBox').innerText = results.join(", ");
+                    document.getElementById('vSNT').innerText = sntCount;
+                    
+                    log(`=> THỎA MÃN (đạt 2 hệ cơ số DX).`, "#f59e0b");
+                    yield;
+                    break;
+                }
+            }
+            if(dxCount < 2) {
+                log(`=> Không thỏa mãn.`, "#9e9e9e");
+                yield;
+            }
+        }
+        log("HOÀN THÀNH!", "#fbbf24");
+    }
+
+    function initSim() {
+        n = parseInt(document.getElementById('inpN').value);
+        s = parseInt(document.getElementById('inpS').value);
+        if(isNaN(n) || isNaN(s)) return;
+
+        currentNum = s; foundCount = 0; sntCount = 0; results = [];
+        document.getElementById('vTarget').innerText = n;
+        document.getElementById('vCount').innerText = "0";
+        document.getElementById('vSNT').innerText = "0";
+        document.getElementById('resBox').innerText = "-";
+        document.getElementById('logArea').innerHTML = "";
+        document.getElementById('btnStep').disabled = false;
+        
+        simulator = mainSim();
+        log(`Bắt đầu tìm ${n} số lớn hơn ${s}...`, "#fbbf24");
+    }
+
+    function nextStep() {
+        if(simulator && !simulator.next().done);
+        else document.getElementById('btnStep').disabled = true;
+    }
+</script>
+</body>
+</html>

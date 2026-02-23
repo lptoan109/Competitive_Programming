@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 3: Đa giác - Hướng dẫn & Mô phỏng</title>
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --color-primary: #0284c7; 
+            --color-secondary: #38bdf8; 
+            --color-accent: #f59e0b; 
+            --color-success: #10b981; 
+            --color-dark: #0c4a6e; 
+            --bg-color: #f0f9ff; 
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px; line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background-color: var(--color-dark); color: #e0f2fe; padding: 15px; text-align: center;
+            border-radius: 12px 12px 0 0; border-bottom: 5px solid var(--color-accent);
+        }
+        .main-title {
+            margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px; color: #fbbf24;
+        }
+
+        .tabs { display: flex; background-color: #e2e8f0; margin-bottom: 0; }
+        .tab-btn {
+            flex: 1; padding: 18px; border: none; background: #cbd5e1;
+            cursor: pointer; font-size: 16px; font-weight: 700; color: #64748b;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--card-bg); color: var(--color-primary); 
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 30px;
+            min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        .section-header {
+            font-size: 1.4rem; font-weight: bold; margin: 30px 0 20px 0;
+            padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; color: var(--color-dark);
+        }
+
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+        .border-blue { border-left: 6px solid #0284c7; }
+        .border-orange { border-left: 6px solid var(--color-accent); }
+        .border-green { border-left: 6px solid var(--color-success); }
+
+        .step-badge {
+            position: absolute; top: -14px; left: 20px; color: white;
+            padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: #0284c7; }
+        .bg-orange { background-color: var(--color-accent); color: #000; }
+        .bg-green { background-color: var(--color-success); }
+
+        .math-formula {
+            background-color: #f0f9ff; padding: 15px; border-radius: 8px;
+            text-align: center; font-size: 1.2em; color: var(--color-dark); 
+            border: 1px dashed var(--color-primary); margin: 15px 0;
+        }
+
+        /* CSS Codeblock chuẩn */
+        .code-block {
+            background-color: var(--code-bg); color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace; font-size: 15px;
+            line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow-x: auto; white-space: pre; border-left: 5px solid var(--color-primary);
+        }
+        .code-block .kw { color: #38bdf8; font-weight: bold; }
+        .code-block .var { color: #e4e121; font-weight: bold; }
+        .code-block .val { color: #ff4d4d; font-weight: bold; }
+        .code-block .cmt { color: #9e9e9e; font-style: italic; }
+
+        .control-panel {
+            background-color: #f0f9ff; padding: 25px; border-radius: 12px;
+            display: flex; gap: 15px; margin-bottom: 25px; border: 2px solid #bae6fd; align-items: center;
+        }
+        
+        .sim-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .log-area {
+            background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px;
+            height: 450px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+
+        .teacher-footer {
+            background-color: var(--color-dark); color: #cffafe; padding: 25px 10px;
+            margin-top: 0; border-top: 5px solid var(--color-accent); text-align: center;
+            border-radius: 0 0 16px 16px;
+        }
+        .footer-title { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: var(--color-accent); }
+        .footer-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 1.05rem; }
+        .footer-item { display: flex; align-items: center; gap: 10px; color: #cffafe; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 8px;}
+        .footer-item:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-2px); }
+        
+        canvas { background: white; border: 1px solid #cbd5e1; border-radius: 8px; width: 100%; height: 400px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 3: Đa Giác (POLY)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Trực Quan</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        <h2 class="section-header">Cách 1: Sử dụng công thức tính diện tích đa giác</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Chi tiết công thức</span>
+            <p>Sử dụng thuật toán <b>Shoelace (Dây giày)</b> để tính diện tích đa giác bất kỳ khi biết tọa độ các đỉnh $(x_1, y_1), (x_2, y_2), \dots, (x_n, y_n)$:</p>
+            <div class="math-formula">
+                $S = \frac{1}{2} | (x_1y_2 - x_2y_1) + (x_2y_3 - x_3y_2) + \dots + (x_ny_1 - x_1y_n) |$
+            </div>
+            <p><b>Ví dụ minh họa:</b> Tính diện tích hình vuông có các đỉnh $A(0,0), B(2,0), C(2,2), D(0,2)$.</p>
+            <ul>
+                <li>$x_1y_2 - x_2y_1 = (0 \cdot 0) - (2 \cdot 0) = 0$</li>
+                <li>$x_2y_3 - x_3y_2 = (2 \cdot 2) - (2 \cdot 0) = 4$</li>
+                <li>$x_3y_4 - x_4y_3 = (2 \cdot 2) - (0 \cdot 2) = 4$</li>
+                <li>$x_4y_1 - x_1y_4 = (0 \cdot 0) - (0 \cdot 2) = 0$</li>
+                <li>Tổng: $|0 + 4 + 4 + 0| = 8$. Diện tích $S = \frac{1}{2} \cdot 8 = 4$.</li>
+            </ul>
+        </div>
+
+        <h2 class="section-header">Cách 2: Nhận xét dựa trên giới hạn đề bài (Bounding Box)</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Logic tối ưu</span>
+            <p>Dựa trên 2 ràng buộc: (1) Không có điểm chung và (2) Luôn lồng nhau.</p>
+            <p><b>Nhận xét:</b> Nếu đa giác $A$ bao đa giác $B$ thì diện tích $A >$ diện tích $B$. Khi đó, tọa độ cực đại/cực tiểu của $A$ chắc chắn sẽ "bao ngoài" tọa độ của $B$.</p>
+            <div class="math-formula">
+                $\max(x_A) > \max(x_B) \iff \text{Diện tích } A > \text{Diện tích } B$
+            </div>
+            <p>Do đó, thay vì tính diện tích, ta chỉ cần tìm giá trị hoành độ lớn nhất ($\max\_x$) của mỗi đa giác để so sánh.</p>
+        </div>
+
+        <h2 class="section-header">Mã giả tiếng Việt (Cách 2 - Tối ưu)</h2>
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Triển khai</span>
+            <div class="code-block">
+<span class="kw">Nhập</span> <span class="var">N</span>, <span class="var">K</span>;
+<span class="kw">Mảng</span> <span class="var">Max_X</span>[<span class="var">N</span>];
+
+<span class="kw">Duyệt</span> <span class="var">i</span> từ <span class="val">1</span> đến <span class="var">N</span>:
+    <span class="kw">Nhập</span> số đỉnh <span class="var">C_i</span>;
+    <span class="var">max_hien_tai</span> = <span class="val">-Vô_cùng</span>;
+    <span class="kw">Duyệt</span> <span class="var">j</span> từ <span class="val">1</span> đến <span class="var">C_i</span>:
+        <span class="kw">Nhập</span> <span class="var">x</span>, <span class="var">y</span>;
+        <span class="kw">Nếu</span> (<span class="var">x</span> > <span class="var">max_hien_tai</span>) <span class="var">max_hien_tai</span> = <span class="var">x</span>;
+    <span class="var">Max_X</span>[<span class="var">i</span>] = <span class="var">max_hien_tai</span>;
+
+<span class="var">threshold</span> = <span class="var">Max_X</span>[<span class="var">K</span>];
+<span class="var">bien_dem</span> = <span class="val">0</span>;
+
+<span class="kw">Duyệt</span> <span class="var">i</span> từ <span class="val">1</span> đến <span class="var">N</span>:
+    <span class="kw">Nếu</span> (<span class="var">Max_X</span>[<span class="var">i</span>] > <span class="var">threshold</span>) <span class="var">bien_dem</span>++;
+
+<span class="kw">Xuất</span> <span class="var">bien_dem</span>;</div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <div class="control-panel">
+            <p><i>Mô phỏng đa giác lồng nhau và so sánh giá trị cực biên:</i></p>
+            <button class="action-btn btn-init" style="padding: 10px 20px;" onclick="runPolySim()">🚀 Chạy mô phỏng</button>
+        </div>
+        <div class="sim-layout">
+            <div class="step-card">
+                <h3>Minh họa trực quan</h3>
+                <canvas id="polyCanvas"></canvas>
+            </div>
+            <div class="log-area" id="logArea">
+                Nhấn nút để bắt đầu so sánh...
+            </div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item">📞 <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item">🌐 <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function runPolySim() {
+        const canvas = document.getElementById('polyCanvas');
+        const ctx = canvas.getContext('2d');
+        const logArea = document.getElementById('logArea');
+        logArea.innerHTML = "";
+        
+        const polygons = [
+            { id: 1, points: [{x:40,y:40}, {x:360,y:40}, {x:360,y:360}, {x:40,y:360}], color: '#bae6fd' },
+            { id: 2, points: [{x:100,y:100}, {x:300,y:100}, {x:200,y:300}], color: '#f59e0b' },
+            { id: 3, points: [{x:150,y:150}, {x:250,y:150}, {x:250,y:250}, {x:150,y:250}], color: '#10b981' }
+        ];
+
+        const K = 2; // Đa giác mục tiêu
+        const maxX_K = Math.max(...polygons[K-1].points.map(p => p.x));
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        logArea.innerHTML += `> <b>Đa giác tiêu chuẩn K=${K}</b> (Màu cam)<br>`;
+        logArea.innerHTML += `> Max X của K = <b style="color:var(--color-accent)">${maxX_K}</b><br><br>`;
+
+        let count = 0;
+        polygons.forEach(p => {
+            const maxX = Math.max(...p.points.map(pt => pt.x));
+            const isLarger = maxX > maxX_K;
+            if(isLarger) count++;
+
+            // Vẽ đa giác
+            ctx.beginPath();
+            ctx.moveTo(p.points[0].x, p.points[0].y);
+            p.points.forEach(pt => ctx.lineTo(pt.x, pt.y));
+            ctx.closePath();
+            ctx.strokeStyle = p.id === K ? 'red' : 'black';
+            ctx.stroke();
+            ctx.fillStyle = p.color + '66';
+            ctx.fill();
+            
+            // Vẽ đường biên maxX để minh họa
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(maxX, 20); ctx.lineTo(maxX, 380);
+            ctx.strokeStyle = p.color;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            logArea.innerHTML += `> Đa giác ${p.id}: Max X = ${maxX} ${isLarger ? '<b style="color:var(--color-success)">[BAO NGOÀI K]</b>' : ''}<br>`;
+        });
+
+        logArea.innerHTML += `<br>> <b>KẾT LUẬN:</b> Có ${count} đa giác lớn hơn đa giác ${K}.`;
+    }
+</script>
+</body>
+</html>

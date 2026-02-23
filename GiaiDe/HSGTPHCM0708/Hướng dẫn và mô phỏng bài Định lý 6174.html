@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 1: Định lý 6174 - Hướng dẫn & Mô phỏng</title>
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --color-primary: #0284c7; 
+            --color-secondary: #38bdf8; 
+            --color-accent: #f59e0b; 
+            --color-success: #10b981; 
+            --color-dark: #0c4a6e; 
+            --bg-color: #f0f9ff; 
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px; line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background-color: var(--color-dark); color: #e0f2fe; padding: 15px; text-align: center;
+            border-radius: 12px 12px 0 0; border-bottom: 5px solid var(--color-accent);
+        }
+        .main-title {
+            margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px; color: #fbbf24;
+        }
+
+        .tabs { display: flex; background-color: #e2e8f0; margin-bottom: 0; }
+        .tab-btn {
+            flex: 1; padding: 18px; border: none; background: #cbd5e1;
+            cursor: pointer; font-size: 16px; font-weight: 700; color: #64748b;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--card-bg); color: var(--color-primary); 
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 30px;
+            min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        .section-header {
+            font-size: 1.4rem; font-weight: bold; margin: 30px 0 20px 0;
+            padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; color: var(--color-dark);
+        }
+
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+        .border-blue { border-left: 6px solid #0284c7; }
+        .border-orange { border-left: 6px solid var(--color-accent); }
+        .border-green { border-left: 6px solid var(--color-success); }
+
+        .step-badge {
+            position: absolute; top: -14px; left: 20px; color: white;
+            padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: #0284c7; }
+        .bg-orange { background-color: var(--color-accent); color: #000; }
+        .bg-green { background-color: var(--color-success); }
+
+        .code-block {
+            background-color: var(--code-bg); color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace; font-size: 15px;
+            line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow-x: auto; white-space: pre; border-left: 5px solid var(--color-primary);
+        }
+        .code-block .kw { color: #38bdf8; font-weight: bold; }
+        .code-block .var { color: #e4e121; font-weight: bold; }
+        .code-block .val { color: #ff4d4d; font-weight: bold; }
+        .code-block .cmt { color: #9e9e9e; font-style: italic; }
+
+        .control-panel {
+            background-color: #f0f9ff; padding: 25px; border-radius: 12px;
+            display: flex; gap: 15px; margin-bottom: 25px; border: 2px solid #bae6fd; align-items: center;
+        }
+        input { padding: 10px; border: 2px solid #7dd3fc; border-radius: 8px; font-size: 1rem; width: 120px; }
+
+        button.action-btn {
+            padding: 12px 24px; color: white; border: none; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+        }
+        .btn-init { background-color: var(--color-primary); }
+        .btn-step { background-color: var(--color-accent); color: #000; }
+
+        .sim-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .log-area {
+            background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px;
+            height: 500px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+
+        .teacher-footer {
+            background-color: var(--color-dark); color: #cffafe; padding: 25px 10px;
+            margin-top: 0; border-top: 5px solid var(--color-accent); text-align: center;
+            border-radius: 0 0 16px 16px;
+        }
+        .footer-title { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: var(--color-accent); }
+        .footer-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 1.05rem; }
+        .footer-item { display: flex; align-items: center; gap: 10px; color: #cffafe; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 8px;}
+        .footer-item:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 1: Định lý 6174 (Hằng số Kaprekar)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Thuật Toán</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        <h2 class="section-header">1. Phân tích bài toán</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Quy tắc</span>
+            <p>Từ một số gồm 4 chữ số (không đồng thời bằng nhau), dãy Kaprekar được tạo ra như sau:</p>
+            <ul>
+                <li>Sắp xếp các chữ số giảm dần để được số $a_1$.</li>
+                <li>Sắp xếp các chữ số tăng dần để được số $b_1$.</li>
+                <li>Số hạng tiếp theo là hiệu $a_1 - b_1$.</li>
+                <li>Tiếp tục quá trình cho đến khi đạt hằng số <b>6174</b>.</li>
+            </ul>
+        </div>
+
+        <h2 class="section-header">2. Thuật toán xử lý</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Các bước thực hiện</span>
+            <ul>
+                <li>Sử dụng vòng lặp <code>while</code> cho đến khi số hiện tại bằng "6174".</li>
+                <li>Xử lý thêm số "0" vào đầu nếu số có ít hơn 4 chữ số (ví dụ 352 thành 0352).</li>
+                <li>Dùng mảng hoặc xâu để sắp xếp chữ số tăng/giảm dần.</li>
+                <li>Tính hiệu và lặp lại.</li>
+            </ul>
+        </div>
+
+        <h2 class="section-header">3. Mã giả tiếng Việt</h2>
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Triển khai</span>
+            <div class="code-block">
+<span class="kw">Nhập</span> <span class="var">so</span>;
+<span class="var">dem</span> = <span class="val">1</span>;
+<span class="kw">Trong khi</span> (<span class="var">so</span> != <span class="val">"6174"</span>):
+    <span class="var">dem</span>++;
+    <span class="kw">Nếu</span> (<span class="var">do_dai_so</span> < <span class="val">4</span>): <span class="kw">Thêm</span> <span class="val">"0"</span> <span class="kw">vào đầu</span>;
+    <span class="var">a</span> = <span class="kw">Sắp_xếp_giảm_dần</span>(<span class="var">so</span>);
+    <span class="var">b</span> = <span class="kw">Sắp_xếp_tăng_dần</span>(<span class="var">so</span>);
+    <span class="var">hieu</span> = <span class="var">a</span> - <span class="var">b</span>;
+    <span class="var">so</span> = <span class="kw">Chuyển_thành_xâu</span>(<span class="var">hieu</span>);
+
+<span class="kw">Xuất</span> <span class="var">dem</span>;</div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <div class="control-panel">
+            <label>Số ban đầu ($n_1$):</label> 
+            <input type="text" id="inpNum" value="7815" maxlength="4">
+            <button class="action-btn btn-init" onclick="initSim()">🚀 Khởi tạo</button>
+            <button class="action-btn btn-step" id="btnStep" onclick="nextStep()" disabled>👟 Bước tiếp theo</button>
+        </div>
+        <div class="sim-layout">
+            <div class="step-card">
+                <h3>Trạng thái hiện tại</h3>
+                <p>Số hiện tại: <b id="vCurr" class="val">-</b></p>
+                <p>Số bước thực hiện: <b id="vStep" class="val">0</b></p>
+                <hr>
+                <p>Số lớn nhất ($a_i$): <b id="vA" class="val">-</b></p>
+                <p>Số nhỏ nhất ($b_i$): <b id="vB" class="val">-</b></p>
+                <p>Phép tính: <span id="vCalc" class="val">-</span></p>
+            </div>
+            <div class="log-area" id="logArea">Nhấn khởi tạo để bắt đầu...</div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item">📞 <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item">🌐 <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    let currentSo = "";
+    let stepCount = 1;
+    let simGen = null;
+
+    function log(msg, color="#d4d4d4") {
+        const area = document.getElementById('logArea');
+        area.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function formatNumber(s) {
+        while (s.length < 4) s = "0" + s;
+        return s;
+    }
+
+    function* solveSim(startSo) {
+        currentSo = startSo;
+        document.getElementById('vCurr').innerText = currentSo;
+        document.getElementById('vStep').innerText = stepCount;
+        log(`Bắt đầu với n1 = ${currentSo}`, "#fbbf24");
+
+        while (currentSo !== "6174") {
+            stepCount++;
+            let temp = formatNumber(currentSo);
+            let digits = temp.split('');
+            
+            // Sắp giảm (a)
+            digits.sort((x, y) => y.localeCompare(x));
+            let aStr = digits.join('');
+            let a = parseInt(aStr);
+            
+            // Sắp tăng (b)
+            digits.sort((x, y) => x.localeCompare(y));
+            let bStr = digits.join('');
+            let b = parseInt(bStr);
+            
+            let c = a - b;
+            
+            document.getElementById('vA').innerText = aStr;
+            document.getElementById('vB').innerText = bStr;
+            document.getElementById('vCalc').innerText = `${aStr} - ${bStr} = ${c}`;
+            
+            log(`Bước ${stepCount}: ${aStr} - ${bStr} = ${c} (n${stepCount})`);
+            
+            currentSo = c.toString();
+            document.getElementById('vCurr').innerText = formatNumber(currentSo);
+            document.getElementById('vStep').innerText = stepCount;
+            
+            yield;
+        }
+        log(`Đạt hằng số 6174. Kết thúc!`, "#10b981");
+    }
+
+    function initSim() {
+        let val = document.getElementById('inpNum').value;
+        if (!/^\d{1,4}$/.test(val)) {
+            alert("Vui lòng nhập số tối đa 4 chữ số!");
+            return;
+        }
+        
+        let allSame = true;
+        if(val.length === 4) {
+            for(let i=1; i<4; i++) if(val[i] !== val[0]) allSame = false;
+            if(allSame) {
+                alert("Các chữ số không được đồng thời bằng nhau!");
+                return;
+            }
+        }
+
+        currentSo = val;
+        stepCount = 1;
+        document.getElementById('logArea').innerHTML = "";
+        document.getElementById('btnStep').disabled = false;
+        
+        simGen = solveSim(val);
+        simGen.next(); // Thực hiện bước hiển thị đầu tiên
+    }
+
+    function nextStep() {
+        if (simGen && !simGen.next().done);
+        else document.getElementById('btnStep').disabled = true;
+    }
+</script>
+</body>
+</html>
