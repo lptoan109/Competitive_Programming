@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 2: Số thừa - Hướng dẫn & Mô phỏng hoàn chỉnh</title>
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --color-primary: #0284c7; 
+            --color-secondary: #38bdf8; 
+            --color-accent: #f59e0b; 
+            --color-success: #10b981; 
+            --color-dark: #0c4a6e; 
+            --bg-color: #f0f9ff; 
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px; line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background-color: var(--color-dark); color: #e0f2fe; padding: 15px; text-align: center;
+            border-radius: 12px 12px 0 0; border-bottom: 5px solid var(--color-accent);
+        }
+        .main-title {
+            margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px; color: #fbbf24;
+        }
+
+        .tabs { display: flex; background-color: #e2e8f0; margin-bottom: 0; }
+        .tab-btn {
+            flex: 1; padding: 18px; border: none; background: #cbd5e1;
+            cursor: pointer; font-size: 16px; font-weight: 700; color: #64748b;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--card-bg); color: var(--color-primary); 
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 30px;
+            min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        .section-header {
+            font-size: 1.4rem; font-weight: bold; margin: 30px 0 20px 0;
+            padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; color: var(--color-dark);
+        }
+
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+        .border-blue { border-left: 6px solid #0284c7; }
+        .border-orange { border-left: 6px solid var(--color-accent); }
+        .border-green { border-left: 6px solid var(--color-success); }
+
+        .step-badge {
+            position: absolute; top: -14px; left: 20px; color: white;
+            padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: #0284c7; }
+        .bg-orange { background-color: var(--color-accent); color: #000; }
+        .bg-green { background-color: var(--color-success); }
+
+        .math-formula {
+            background-color: #f0f9ff; padding: 15px; border-radius: 8px;
+            text-align: center; font-size: 1.2em; color: var(--color-dark); 
+            border: 1px dashed var(--color-primary); margin: 15px 0;
+        }
+
+        .code-block {
+            background-color: var(--code-bg); color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace; font-size: 15px;
+            line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow-x: auto; white-space: pre; border-left: 5px solid var(--color-primary);
+        }
+        .code-block .kw { color: #38bdf8; font-weight: bold; }
+        .code-block .var { color: #e4e121; font-weight: bold; }
+        .code-block .val { color: #ff4d4d; font-weight: bold; }
+        .code-block .cmt { color: #9e9e9e; font-style: italic; }
+
+        .control-panel {
+            background-color: #f0f9ff; padding: 25px; border-radius: 12px;
+            display: flex; gap: 15px; margin-bottom: 25px; border: 2px solid #bae6fd; align-items: center;
+        }
+        input { padding: 10px; border: 2px solid #7dd3fc; border-radius: 8px; font-size: 1rem; width: 200px; }
+
+        button.action-btn {
+            padding: 12px 24px; color: white; border: none; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+        }
+        .btn-init { background-color: var(--color-primary); }
+        .btn-step { background-color: var(--color-accent); color: #000; }
+
+        .sim-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .log-area {
+            background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px;
+            height: 500px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+
+        .teacher-footer {
+            background-color: var(--color-dark); color: #cffafe; padding: 25px 10px;
+            margin-top: 0; border-top: 5px solid var(--color-accent); text-align: center;
+            border-radius: 0 0 16px 16px;
+        }
+        .footer-title { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: var(--color-accent); }
+        .footer-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 1.05rem; }
+        .footer-item { display: flex; align-items: center; gap: 10px; color: #cffafe; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 8px;}
+        .footer-item:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 2: Số Thừa (Abundant Number)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Đa Thuật Toán</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        <h2 class="section-header">1. Phân tích bài toán</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Định nghĩa</span>
+            <p>Số nguyên dương $X$ là <b>số thừa</b> khi tổng các ước số thực sự của nó (tính cả 1 nhưng không tính chính nó) lớn hơn $X$.</p>
+            <p>Ví dụ: Số $12$ có các ước là $1, 2, 3, 4, 6$. Tổng: $1+2+3+4+6 = 16 > 12$. Vậy $12$ là số thừa.</p>
+        </div>
+
+        <h2 class="section-header">2. Các Subtask thuật toán</h2>
+
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Subtask 1: Vét cạn (N < 10⁵)</span>
+            <p>Duyệt từng số từ $N$ trở đi. Với mỗi số $i$, duyệt toàn bộ từ $1$ đến $i-1$ để tính tổng ước.</p>
+            <div class="code-block">
+<span class="kw">Lặp</span> <span class="var">i</span> từ <span class="var">N</span> đến vô cùng:
+    <span class="var">tổng_ước</span> = <span class="val">0</span>;
+    <span class="kw">Duyệt</span> <span class="var">j</span> từ <span class="val">1</span> đến <span class="var">i</span> - <span class="val">1</span>:
+        <span class="kw">Nếu</span> (<span class="var">i</span> % <span class="var">j</span> == <span class="val">0</span>) <span class="var">tổng_ước</span> += <span class="var">j</span>;
+    <span class="kw">Nếu</span> (<span class="var">tổng_ước</span> > <span class="var">i</span>):
+        <span class="kw">Xuất</span> <span class="var">i</span> và <span class="kw">Thoát</span>;</div>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Subtask 2: Duyệt căn bậc hai (N < 10⁹)</span>
+            <p>Tối ưu việc tính tổng ước bằng cách duyệt đến $\sqrt{i}$. Nếu $j$ là ước thì $i/j$ cũng là ước.</p>
+            <div class="code-block">
+<span class="kw">Hàm</span> <span class="var">Tính_Tổng_Ước</span>(<span class="var">n</span>):
+    <span class="var">S</span> = <span class="val">1</span>; <span class="cmt">// Số 1 luôn là ước thực sự</span>
+    <span class="kw">Duyệt</span> <span class="var">j</span> từ <span class="val">2</span> đến <span class="kw">căn</span>(<span class="var">n</span>):
+        <span class="kw">Nếu</span> (<span class="var">n</span> % <span class="var">j</span> == <span class="val">0</span>):
+            <span class="kw">Nếu</span> (<span class="var">j</span> * <span class="var">j</span> == <span class="var">n</span>) <span class="var">S</span> += <span class="var">j</span>;
+            <span class="kw">Ngược lại</span> <span class="var">S</span> += (<span class="var">j</span> + <span class="var">n</span>/<span class="var">j</span>);
+    <span class="kw">Trả về</span> <span class="var">S</span>;</div>
+        </div>
+
+        <h2 class="section-header">3. Phân tích Subtask 3 (N < 10¹⁸) dành cho THCS</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Kiến thức 6k ± 1</span>
+            <p>Mọi số nguyên tố > 3 đều có dạng $6k-1$ hoặc $6k+1$. Điều này giúp ta tăng tốc độ kiểm tra ước lên gấp 3 lần.</p>
+            <div class="code-block">
+<span class="cmt">// Kiểm tra ước tối ưu</span>
+<span class="kw">Nếu</span> (n % 2 == 0) <span class="cmt">// Xử lý riêng 2</span>
+<span class="kw">Nếu</span> (n % 3 == 0) <span class="cmt">// Xử lý riêng 3</span>
+<span class="kw">Lặp</span> <span class="var">i</span> từ 5, mỗi bước nhảy 6 (<span class="var">i</span> += 6):
+    <span class="kw">Kiểm tra</span> <span class="var">i</span> và <span class="var">i + 2</span> (đại diện cho 6k-1 và 6k+1)</div>
+        </div>
+
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Phân tích thừa số nguyên tố</span>
+            <p>Thay vì cộng dồn từng ước, ta phân tích $n = p_1^{a_1} \cdot p_2^{a_2} \dots$. Tổng ước thực sự được tính bằng công thức:</p>
+            <div class="math-formula">
+                $S = \left( \prod_{i=1}^{k} \frac{p_i^{a_i+1}-1}{p_i-1} \right) - n$
+            </div>
+            <p><b>Ví dụ:</b> $12 = 2^2 \cdot 3^1$.</p>
+            <ul>
+                <li>$\sigma(12) = \frac{2^{2+1}-1}{2-1} \cdot \frac{3^{1+1}-1}{3-1} = \frac{7}{1} \cdot \frac{8}{2} = 7 \cdot 4 = 28$.</li>
+                <li>Tổng ước thực sự: $28 - 12 = 16$.</li>
+            </ul>
+        </div>
+
+        <h2 class="section-header">2. Mã giả tiếng Việt (Tính tổng ước bằng phân tích SNT)</h2>
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Triển khai</span>
+            <div class="code-block">
+<span class="kw">Hàm</span> <span class="var">TongUocSNT</span>(<span class="var">n</span>):
+    <span class="var">tong</span> = <span class="val">1</span>, <span class="var">temp</span> = <span class="var">n</span>;
+    <span class="kw">Duyệt</span> <span class="var">p</span> qua các số nguyên tố (dùng cách nhảy 6):
+        <span class="kw">Nếu</span> (<span class="var">temp</span> % <span class="var">p</span> == <span class="val">0</span>):
+            <span class="var">mu_p</span> = <span class="val">1</span>;
+            <span class="kw">Trong khi</span> (<span class="var">temp</span> % <span class="var">p</span> == <span class="val">0</span>):
+                <span class="var">mu_p</span> = <span class="var">mu_p</span> * <span class="var">p</span> + <span class="val">1</span>;
+                <span class="var">temp</span> /= <span class="var">p</span>;
+            <span class="var">tong</span> *= <span class="var">mu_p</span>;
+    <span class="kw">Nếu</span> (<span class="var">temp</span> > <span class="val">1</span>) <span class="var">tong</span> *= (<span class="var">temp</span> + <span class="val">1</span>);
+    <span class="kw">Trả về</span> <span class="var">tong</span> - <span class="var">n</span>;</div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <div class="control-panel">
+            <label><b>Nhập N:</b></label> 
+            <input type="number" id="inpN" value="6">
+            <select id="simMethod" style="padding: 10px; border-radius: 8px; border: 2px solid #7dd3fc;">
+                <option value="sqrt">Cách 2: Duyệt căn O(√N)</option>
+                <option value="snt">Cách 3: Phân tích SNT (6k ± 1)</option>
+            </select>
+            <button class="action-btn btn-init" onclick="initSim()">🚀 Khởi tạo</button>
+            <button class="action-btn btn-step" id="btnStep" onclick="nextStep()" disabled>👟 Chạy bước</button>
+        </div>
+        <div class="sim-layout">
+            <div class="step-card">
+                <h3>Kết quả</h3>
+                <p>Số đang xét: <b id="vCurrent" class="val">-</b></p>
+                <p id="labelResult">Tổng ước:</p>
+                <b id="vSum" class="val">0</b>
+                <p>Trạng thái: <b id="simStatus" class="val">Chờ khởi tạo</b></p>
+                <hr>
+                <div id="extraInfo"></div>
+            </div>
+            <div class="log-area" id="logArea"></div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item">📞 <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item">🌐 <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    let nVal, sim;
+    const logArea = document.getElementById('logArea');
+
+    function log(msg, color="#d4d4d4") {
+        logArea.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    // Generator cho cách Duyệt căn (Subtask 2)
+    function* sqrtSim(n) {
+        let num = n;
+        while(true) {
+            document.getElementById('vCurrent').innerText = num;
+            log(`Kiểm tra số ${num} bằng phương pháp duyệt căn...`, "#38bdf8");
+            let sum = 1;
+            for(let i = 2; i * i <= num; i++) {
+                if(num % i === 0) {
+                    if(i * i === num) { sum += i; log(`&nbsp;&nbsp;+ Ước căn: ${i}`); }
+                    else { sum += (i + num/i); log(`&nbsp;&nbsp;+ Cặp ước: (${i}, ${num/i})`); }
+                }
+            }
+            document.getElementById('vSum').innerText = sum;
+            if(sum > num) {
+                log(`=> THỎA MÃN: ${sum} > ${num}`, "#10b981");
+                return num;
+            }
+            log(`=> ${sum} <= ${num}, tăng N...`, "#9e9e9e");
+            yield;
+            num++;
+        }
+    }
+
+    // Generator cho cách Phân tích SNT (Subtask 3)
+    function* sntSim(n) {
+        let num = n;
+        while(true) {
+            document.getElementById('vCurrent').innerText = num;
+            log(`Phân tích SNT cho số ${num}...`, "#f59e0b");
+            let temp = num, sigma = 1, factors = [];
+            
+            let p = 2;
+            while(p*p <= temp) {
+                if(temp % p === 0) {
+                    let p_sum = 1, p_val = 1, count = 0;
+                    while(temp % p === 0) { p_val *= p; p_sum += p_val; temp /= p; count++; }
+                    sigma *= p_sum; factors.push(`${p}^${count}`);
+                    log(`&nbsp;&nbsp;+ Thừa số ${p}^${count}, tích tích lũy sigma = ${sigma}`);
+                    yield;
+                }
+                p === 2 ? p = 3 : (p % 6 === 3 ? p += 2 : p += 4); // Logic nhảy 6k +/- 1 lược giản
+            }
+            if(temp > 1) { sigma *= (temp + 1); factors.push(`${temp}^1`); }
+            
+            let finalSum = sigma - num;
+            document.getElementById('vSum').innerText = finalSum;
+            document.getElementById('extraInfo').innerHTML = `Phân tích: ${factors.join(" × ")}`;
+            
+            if(finalSum > num) {
+                log(`=> THỎA MÃN: Tổng ước thực sự ${finalSum} > ${num}`, "#10b981");
+                return num;
+            }
+            log(`=> ${finalSum} <= ${num}, tăng N...`, "#9e9e9e");
+            yield;
+            num++;
+        }
+    }
+
+    function initSim() {
+        nVal = parseInt(document.getElementById('inpN').value);
+        const method = document.getElementById('simMethod').value;
+        logArea.innerHTML = "";
+        document.getElementById('extraInfo').innerHTML = "";
+        document.getElementById('btnStep').disabled = false;
+        document.getElementById('simStatus').innerText = "Đang chạy...";
+        
+        sim = method === 'sqrt' ? sqrtSim(nVal) : sntSim(nVal);
+    }
+
+    function nextStep() {
+        const result = sim.next();
+        if(result.done) {
+            document.getElementById('simStatus').innerText = "ĐÃ TÌM THẤY!";
+            document.getElementById('btnStep').disabled = true;
+        }
+    }
+</script>
+</body>
+</html>

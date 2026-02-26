@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 1: Dãy tốt - Hướng dẫn & Mô phỏng</title>
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$']] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --color-primary: #0284c7; 
+            --color-secondary: #38bdf8; 
+            --color-accent: #f59e0b; 
+            --color-success: #10b981; 
+            --color-dark: #0c4a6e; 
+            --bg-color: #f0f9ff; 
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px; line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .header {
+            background-color: var(--color-dark); color: #e0f2fe; padding: 15px; text-align: center;
+            border-radius: 12px 12px 0 0; border-bottom: 5px solid var(--color-accent);
+        }
+        .main-title {
+            margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px; color: #fbbf24;
+        }
+
+        .tabs { display: flex; background-color: #e2e8f0; margin-bottom: 0; }
+        .tab-btn {
+            flex: 1; padding: 18px; border: none; background: #cbd5e1;
+            cursor: pointer; font-size: 16px; font-weight: 700; color: #64748b;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--card-bg); color: var(--color-primary); 
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 30px;
+            min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        .section-header {
+            font-size: 1.4rem; font-weight: bold; margin: 30px 0 20px 0;
+            padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; color: var(--color-dark);
+        }
+
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+        .border-blue { border-left: 6px solid #0284c7; }
+        .border-orange { border-left: 6px solid var(--color-accent); }
+        .border-green { border-left: 6px solid var(--color-success); }
+
+        .step-badge {
+            position: absolute; top: -14px; left: 20px; color: white;
+            padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: #0284c7; }
+        .bg-orange { background-color: var(--color-accent); color: #000; }
+        .bg-green { background-color: var(--color-success); }
+
+        /* Codeblock CSS chuẩn */
+        .code-block {
+            background-color: var(--code-bg); color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace; font-size: 15px;
+            line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow-x: auto; white-space: pre; border-left: 5px solid var(--color-primary);
+        }
+        .code-block .kw { color: #38bdf8; font-weight: bold; }
+        .code-block .var { color: #e4e121; font-weight: bold; }
+        .code-block .val { color: #ff4d4d; font-weight: bold; }
+        .code-block .cmt { color: #9e9e9e; font-style: italic; }
+
+        .control-panel {
+            background-color: #f0f9ff; padding: 25px; border-radius: 12px;
+            display: flex; gap: 15px; margin-bottom: 25px; border: 2px solid #bae6fd; align-items: center;
+        }
+        input { padding: 10px; border: 2px solid #7dd3fc; border-radius: 8px; font-size: 1rem; width: 300px; }
+
+        button.action-btn {
+            padding: 12px 24px; color: white; border: none; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+        }
+        .btn-init { background-color: var(--color-primary); }
+        .btn-step { background-color: var(--color-accent); color: #000; }
+
+        .sim-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .log-area {
+            background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px;
+            height: 500px; overflow-y: auto; font-family: 'Consolas', monospace;
+        }
+
+        .teacher-footer {
+            background-color: var(--color-dark); color: #cffafe; padding: 25px 10px;
+            margin-top: 0; border-top: 5px solid var(--color-accent); text-align: center;
+            border-radius: 0 0 16px 16px;
+        }
+        .footer-title { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: var(--color-accent); }
+        .footer-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; font-size: 1.05rem; }
+        .footer-item { display: flex; align-items: center; gap: 10px; color: #cffafe; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 8px;}
+        .footer-item:hover { background-color: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-2px); }
+        
+        .array-display { display: flex; gap: 5px; flex-wrap: wrap; margin: 15px 0; }
+        .cell { padding: 8px 12px; border: 1px solid #0284c7; background: white; border-radius: 4px; font-weight: bold; }
+        .cell-k { background: var(--color-accent); color: black; border-color: black; }
+        .cell-less { background: #fee2e2; }
+        .cell-more { background: #dcfce7; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 1: Dãy tốt (SET)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Thuật Toán</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        <h2 class="section-header">1. Phân tích đề bài</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Định nghĩa</span>
+            <p>Dãy $E$ được gọi là <b>"tốt"</b> nếu tồn tại một số $K$ trong dãy sao cho có ít nhất một số nhỏ hơn $K$ và số lượng số nhỏ hơn $K$ bằng số lượng số lớn hơn $K$.</p>
+        </div>
+
+        <h2 class="section-header">2. Phương pháp Vét cạn (Brute-force)</h2>
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Ý tưởng</span>
+            <p>Thử lần lượt mọi phần tử trong dãy để làm số $K$. Với mỗi số $K$, ta duyệt lại toàn bộ dãy để đếm xem có bao nhiêu số nhỏ hơn và bao nhiêu số lớn hơn nó.</p>
+            <p><b>Độ phức tạp:</b> $O(M^2)$ (Không tối ưu cho $M = 10^5$ nhưng dễ hiểu).</p>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Mã giả Vét cạn</span>
+            <div class="code-block">
+<span class="kw">Duyệt</span> <span class="var">i</span> từ <span class="val">0</span> đến <span class="var">M</span> - <span class="val">1</span>:
+    <span class="var">K</span> = <span class="var">A</span>[<span class="var">i</span>];
+    <span class="var">đếm_nhỏ</span> = <span class="val">0</span>, <span class="var">đếm_lớn</span> = <span class="val">0</span>;
+    <span class="kw">Duyệt</span> <span class="var">j</span> từ <span class="val">0</span> đến <span class="var">M</span> - <span class="val">1</span>:
+        <span class="kw">Nếu</span> (<span class="var">A</span>[<span class="var">j</span>] < <span class="var">K</span>) <span class="var">đếm_nhỏ</span>++;
+        <span class="kw">Nếu</span> (<span class="var">A</span>[<span class="var">j</span>] > <span class="var">K</span>) <span class="var">đếm_lớn</span>++;
+    
+    <span class="kw">Nếu</span> (<span class="var">đếm_nhỏ</span> == <span class="var">đếm_lớn</span> và <span class="var">đếm_nhỏ</span> > <span class="val">0</span>) 
+        <span class="kw">Trả về</span> <span class="val">1</span>; <span class="cmt">// Tìm thấy K thỏa mãn</span></div>
+        </div>
+
+        <h2 class="section-header">3. Phương pháp Tối ưu (Sắp xếp + Tìm kiếm nhị phân)</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Chiến thuật</span>
+            <p>Sau khi sắp xếp dãy tăng dần, số $K$ thỏa mãn điều kiện nhất định sẽ nằm quanh vị trí trung tâm. Ta sử dụng tìm kiếm nhị phân để xác định biên của các phần tử bằng $K$.</p>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Mã giả Tối ưu</span>
+            <div class="code-block">
+<span class="kw">Sắp_xếp</span>(<span class="var">dãy_A</span>);
+<span class="var">vị_trí_giữa</span> = <span class="var">M</span> / <span class="val">2</span>;
+<span class="var">K</span> = <span class="var">A</span>[<span class="var">vị_trí_giữa</span>];
+
+<span class="cmt">// Dùng Binary Search tìm vị trí xuất hiện đầu và cuối của K</span>
+<span class="var">vtl</span> = <span class="var">BSFirst</span>(<span class="var">K</span>); 
+<span class="var">vtr</span> = <span class="var">BSLast</span>(<span class="var">K</span>); 
+
+<span class="kw">Nếu</span> (<span class="var">vtl</span> + <span class="val">1</span> == <span class="var">M</span> - <span class="var">vtr</span> và <span class="var">vtl</span> > <span class="val">0</span>) 
+    <span class="kw">Xuất</span> <span class="val">1</span>;</div>
+        </div>
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <div class="control-panel">
+            <label><b>Nhập dãy số:</b></label> 
+            <input type="text" id="inpSet" value="-1 2 1 4 5 3 6" style="width: 400px;">
+            <button class="action-btn btn-init" onclick="initSim()">🚀 Khởi tạo</button>
+            <button class="action-btn btn-step" id="btnStep" onclick="nextStep()" disabled>👟 Chạy mô phỏng</button>
+        </div>
+        <div class="sim-layout">
+            <div class="step-card">
+                <h3>Trạng thái mảng (Sắp xếp)</h3>
+                <div id="arrayContainer" class="array-display"></div>
+                <hr>
+                <p>Số $K$ tiềm năng: <b id="valK" class="val">-</b></p>
+                <p>Số lượng < $K$ (đếm): <b id="countLess" class="val">0</b></p>
+                <p>Số lượng > $K$ (đếm): <b id="countMore" class="val">0</b></p>
+                <p>Kết quả: <b id="resVal" class="val" style="font-size: 1.5rem;">-</b></p>
+            </div>
+            <div class="log-area" id="logArea"></div>
+        </div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item">📞 <b>0903781593</b></span>
+            <a href="http://luyenthichuyentin10.edu.vn" target="_blank" class="footer-item">🌐 <b>luyenthichuyentin10.edu.vn</b></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    let a = [];
+    let logArea = document.getElementById('logArea');
+
+    function log(msg, color="#d4d4d4") {
+        logArea.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    function initSim() {
+        let input = document.getElementById('inpSet').value.trim();
+        if (!input) return;
+        a = input.split(/\s+/).map(Number).sort((x, y) => x - y);
+        
+        document.getElementById('arrayContainer').innerHTML = "";
+        a.forEach(val => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.innerText = val;
+            document.getElementById('arrayContainer').appendChild(cell);
+        });
+
+        logArea.innerHTML = "";
+        log(`Mảng sau khi sắp xếp: [${a.join(', ')}]`, "#38bdf8");
+        document.getElementById('resVal').innerText = "-";
+        document.getElementById('btnStep').disabled = false;
+    }
+
+    function nextStep() {
+        let m = a.length;
+        let mid = Math.floor(m / 2);
+        let k = a[mid];
+        
+        let first = a.indexOf(k);
+        let last = a.lastIndexOf(k);
+        
+        let less = first;
+        let more = m - 1 - last;
+
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell, idx) => {
+            cell.className = 'cell';
+            if (a[idx] === k) cell.classList.add('cell-k');
+            else if (a[idx] < k) cell.classList.add('cell-less');
+            else cell.classList.add('cell-more');
+        });
+
+        document.getElementById('valK').innerText = k;
+        document.getElementById('countLess').innerText = less;
+        document.getElementById('countMore').innerText = more;
+
+        log(`Thử giá trị trung tâm K = ${k}`, "#f59e0b");
+        log(`Đếm số lượng phần tử < ${k}: ${less} (vùng đỏ)`);
+        log(`Đếm số lượng phần tử > ${k}: ${more} (vùng xanh)`);
+
+        if (less === more && less > 0) {
+            document.getElementById('resVal').innerText = "1 (TỐT)";
+            document.getElementById('resVal').style.color = "var(--color-success)";
+            log("Kết luận: Dãy tốt!", "#10b981");
+        } else {
+            document.getElementById('resVal').innerText = "0 (KHÔNG TỐT)";
+            log("Kết luận: Không thỏa mãn điều kiện dãy tốt.", "#ff4d4d");
+        }
+        document.getElementById('btnStep').disabled = true;
+    }
+</script>
+</body>
+</html>
