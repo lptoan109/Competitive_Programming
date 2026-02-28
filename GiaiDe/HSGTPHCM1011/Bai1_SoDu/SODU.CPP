@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-map <int,int> a;
+bool a[42];
 int kq;
 int main()
 {
@@ -13,10 +13,10 @@ int main()
         cin >> t;
         int sd = t%42;
         //cout << sd << " ";
-        if(a.find(sd)==a.end()){
+        if(a[sd]==false){
             kq++;
         }
-        a[sd]++;
+        a[sd]=true;
     }
     //cout << "\n";
     cout << kq;
