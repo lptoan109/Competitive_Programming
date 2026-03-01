@@ -12,7 +12,7 @@ int main()
     for(int i =1 ; i<=n; ++i){
         cin >> a[i];
     }
-    for(int i = 1; i<=n; ++i){
+    while(i<=n){
         kq++;
         while(i<n&&a[i]<a[i+1]) i++;
         while(i<n&&a[i]>a[i+1]) i++;

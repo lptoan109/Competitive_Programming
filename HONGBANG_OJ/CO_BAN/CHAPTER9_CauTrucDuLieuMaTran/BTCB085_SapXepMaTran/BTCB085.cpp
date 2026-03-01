@@ -97,8 +97,8 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(0); cout.tie(0);
-    //freopen("BTCB085.INP", "r", stdin);
-    //freopen("BTCB085.OUT", "w", stdout);
+    freopen("BTCB085.INP", "r", stdin);
+    freopen("BTCB085.OUT", "w", stdout);
     int m,f,n;
     nhap(m,n);
     mtma(m,n,f);
