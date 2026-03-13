@@ -2,7 +2,7 @@
 using namespace std;
 #define ll long long
 const ll MAXN = 1e6;
-ll n, a[MAXN+5], kq;
+ll n,a[MAXN+5], dp[MAXN+5],vt[MAXN+5], kq;
 vector <ll> vkq;
 int main()
 {
@@ -14,35 +14,31 @@ int main()
     for(int i = 1; i<=n; ++i){
         cin >> a[i];
     }
-    ll vt = 0;
-    if(a[1]<a[2]){
-        kq = a[1];
-        vt = 1;
-    }
-    else{
-        kq = a[2];
-        vt = 2;
-    }
-    vkq.push_back(vt);
-    while(vt<=n){
-        if(vt+2>n){
-            vkq.push_back(vt+1);
-            kq = abs(kq-a[vt+1]);
-            break;
-        }
-        if(a[vt+1]<a[vt+2]){
-            vkq.push_back(vt+1);
-            kq = abs(kq-a[vt+1]);
-            vt+=1;
+    dp[1] = 0;
+    dp[2] = abs(a[1]-a[2]);
+    vt[2] = 1;
+    for(int i = 3; i<=n; ++i){
+        ll c1 = dp[i-1]+(abs(a[i-1]-a[i])), c2 = dp[i-2]+(abs(a[i-2]-a[i]));
+        if(c2<=c1){
+            dp[i] = c2;
+            vt[i] = i-2;
+            //cout << i  << " " <<i-2 <<" " << c2 << "\n";
         }
         else{
-            vkq.push_back(vt+2);
-            kq = abs(kq-a[vt+2]);
-            vt +=2;
+            dp[i] = c1;
+            vt[i] = i-1;
+            //cout << i  << " " << i-1 << " " << c1 << "\n";
         }
     }
-    cout << kq << "\n";
-    for(ll i:vkq){
+    vkq.push_back(n);
+    int t = n;
+    while(t>1){
+        vkq.push_back(vt[t]);
+        t = vt[t];
+    }
+    cout << dp[n] << "\n";
+    sort(vkq.begin(), vkq.end());
+    for(int i:vkq){
         cout << i << " ";
     }
     return 0;

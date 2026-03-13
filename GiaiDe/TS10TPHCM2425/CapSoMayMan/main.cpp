@@ -18,7 +18,7 @@ int main()
     int n = r-l+1;
     for(int i = 0; i<n; ++i){
         auto vtl = lower_bound(a.begin(), a.end(), p-a[i]), vtr = upper_bound(a.begin(), a.end(), p-a[i]);
-        kq +=distance(vtl,vtr) *2;
+        kq += distance(vtl,vtr) *2;
     }
     cout << kq;
     return 0;
