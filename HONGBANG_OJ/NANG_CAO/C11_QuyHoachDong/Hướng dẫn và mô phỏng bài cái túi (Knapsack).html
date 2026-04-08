@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 10: Cái Túi (Unbounded Knapsack)</title>
+    <style>
+        :root {
+            /* Theme colors */
+            --color-primary: #0891b2; /* Cyan 600 */
+            --color-secondary: #22d3ee; /* Cyan 400 */
+            --color-accent: #f59e0b; /* Amber 500 */
+            --color-success: #10b981; /* Emerald 500 */
+            --color-dark: #164e63; /* Dark Cyan */
+            
+            --bg-color: #ecfeff; /* Light Cyan Tint */
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* --- HEADER & FOOTER --- */
+        .header {
+            background-color: var(--color-dark); color: #cffafe; padding: 15px; text-align: center;
+            border-radius: 12px 12px 0 0; border-bottom: 5px solid var(--color-accent);
+        }
+        .main-title {
+            margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px; color: #fbbf24;
+        }
+
+        .teacher-footer {
+            background-color: var(--color-dark); color: #cffafe; padding: 10px 5px;
+            margin-top: 0; border-top: 4px solid #f59e0b; text-align: center;
+            border-radius: 0 0 12px 12px;
+        }
+        .footer-title { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; color: #fbbf24; }
+        .footer-info { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; font-size: 1rem; }
+        .footer-item { display: flex; align-items: center; gap: 8px; color: #cffafe; text-decoration: none; transition: all 0.3s ease; padding: 5px 10px; border-radius: 6px; }
+        .footer-item:hover { background-color: #0e7490; color: #fff; transform: translateY(-2px); }
+
+        /* --- TABS --- */
+        .tabs { display: flex; background-color: #e2e8f0; margin-bottom: 0; }
+        .tab-btn {
+            flex: 1; padding: 18px; border: none; background: #cbd5e1;
+            cursor: pointer; font-size: 16px; font-weight: 700; color: #64748b;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--card-bg); color: var(--color-primary); 
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 30px;
+            min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active { display: block; }
+
+        /* --- INFOGRAPHIC STYLES --- */
+        .section-header {
+            font-size: 1.4rem; font-weight: bold; margin: 30px 0 20px 0;
+            padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; color: var(--color-dark);
+        }
+
+        .step-card {
+            background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+        .border-blue { border-left: 6px solid #3b82f6; }
+        .border-orange { border-left: 6px solid var(--color-accent); }
+        .border-green { border-left: 6px solid var(--color-success); }
+
+        .step-badge {
+            position: absolute; top: -14px; left: 20px; color: white;
+            padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+            text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .bg-blue { background-color: #3b82f6; }
+        .bg-orange { background-color: var(--color-accent); color: #000; }
+        .bg-green { background-color: var(--color-success); }
+
+        .math-formula {
+            background-color: #ecfeff; padding: 15px; border-radius: 8px;
+            text-align: center; font-family: 'Courier New', monospace; font-weight: bold;
+            font-size: 1.2em; color: var(--color-dark); border: 1px dashed var(--color-primary); margin: 15px 0;
+        }
+
+        /* --- CODE BLOCK --- */
+        .code-block {
+            background-color: var(--code-bg); color: #e9ebee;
+            font-family: Consolas, "Courier New", monospace; font-size: 15px;
+            line-height: 1.6; padding: 16px; border-radius: 8px;
+            overflow-x: auto; white-space: pre; border-left: 5px solid var(--color-primary);
+        }
+        .code-block .kw { color: #2bff00; font-weight: bold; }
+        .code-block .var { color: #e4e121; font-weight: bold; }
+        .code-block .type { color: #4bbdf1; font-weight: bold; }
+        .code-block .num { color: #ee2255; }
+        .code-block .cmt { color: #9e9e9e; font-style: italic; }
+
+        /* --- SIMULATION UI --- */
+        .control-panel {
+            background-color: #ecfeff; padding: 20px; border-radius: 8px;
+            display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;
+            border: 1px solid #a5f3fc;
+        }
+        .control-row {
+            display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
+        }
+        input[type="number"] { 
+            padding: 8px; border: 2px solid #22d3ee; border-radius: 6px; 
+            font-family: monospace; font-size: 1rem; width: 80px;
+        }
+        textarea {
+            padding: 10px; border: 2px solid #a5f3fc; border-radius: 6px; 
+            font-family: monospace; font-size: 1rem; width: 100%; height: 80px;
+        }
+        button.action-btn {
+            padding: 10px 20px; background-color: var(--color-primary); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+            transition: background 0.3s;
+        }
+        button.step-btn { background-color: var(--color-accent); color: #000; }
+        button.action-btn:disabled { background-color: #94a3b8; cursor: not-allowed; color: white; }
+
+        /* VISUALIZATION GRIDS */
+        .grid-container {
+            display: flex; gap: 20px; justify-content: center; overflow: auto; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        
+        .grid-box {
+            display: flex; flex-direction: column; align-items: center; min-width: 300px; flex: 1;
+        }
+        .grid-title {
+            font-weight: bold; margin-bottom: 5px; color: var(--color-primary); font-size: 0.9rem;
+        }
+
+        .data-table {
+            border-collapse: collapse; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #cbd5e1; padding: 8px; text-align: center;
+        }
+        .data-table th { background-color: var(--color-primary); color: white; }
+        
+        .dp-cell {
+            min-width: 40px; height: 40px; border: 1px solid #cbd5e1; display: inline-flex; 
+            align-items: center; justify-content: center; margin: 1px; background: white; font-weight: bold;
+            position: relative;
+        }
+        .dp-idx {
+            position: absolute; top: -15px; font-size: 0.7rem; color: #64748b; font-weight: normal;
+        }
+
+        .cell-calc { border: 2px solid var(--color-accent); background-color: #fffbeb; transform: scale(1.1); z-index: 10; }
+        .cell-done { background-color: #f0fdf4; color: #166534; }
+        .cell-highlight { background-color: #fef08a !important; color: #b45309; }
+
+        .log-area {
+            background-color: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px;
+            height: 200px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 0.9rem;
+        }
+        .log-hl { color: #fcd34d; font-weight: bold; }
+        .log-res { color: #86efac; font-weight: bold; }
+        .log-trace { color: #93c5fd; font-weight: bold; margin-left: 20px;}
+
+    </style>
+    <script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="main-title">Bài 10: Cái Túi (Unbounded Knapsack)</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('theory')">📚 Hướng Dẫn & Lý Thuyết</button>
+        <button class="tab-btn" onclick="openTab('simulation')">⚙️ Mô Phỏng Trực Quan</button>
+    </div>
+
+    <div id="theory" class="tab-content active">
+        
+        <h2 class="section-header">1. Phân tích đề bài</h2>
+        <div class="step-card border-blue">
+            <span class="step-badge bg-blue">Đề bài</span>
+            <div class="step-content">
+                <p><b>Yêu cầu:</b> Có $N$ loại đồ vật. Loại thứ $i$ có trọng lượng $W_i$ và giá trị $V_i$. Một cái túi có sức chứa tối đa $W$.</p>
+                <p><b>Điểm đặc biệt:</b> Số lượng mỗi loại đồ vật là <b>không giới hạn</b> (giả sử luôn đủ dùng).</p>
+                <p><b>Mục tiêu:</b> Chọn các đồ vật bỏ vào túi sao cho tổng trọng lượng $\le W$ và tổng giá trị là <b>Lớn nhất</b>.</p>
+            </div>
+        </div>
+
+        <h2 class="section-header">2. Xây dựng thuật toán QHD</h2>
+        
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Bước 1: Trạng thái & Cơ sở</span>
+            <div class="step-content">
+                <ul>
+                    <li><b>$DP[j]$:</b> Tổng giá trị lớn nhất có thể đạt được với sức chứa của túi là $j$.</li>
+                    <li><b>Bài toán cơ sở:</b> $DP[0] = 0$ (Túi không chứa gì thì giá trị là 0).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card border-orange">
+            <span class="step-badge bg-orange">Bước 2: Công thức truy hồi</span>
+            <div class="step-content">
+                <p>Với mỗi mức trọng lượng $j$ (từ $1$ đến $W$), ta thử chọn từng loại đồ vật $i$:</p>
+                <ul>
+                    <li>Nếu chọn vật $i$ (có trọng lượng $W_i$), thì trước đó túi phải có sức chứa $j - W_i$.</li>
+                    <li>Giá trị khi đó sẽ là: $DP[j - W_i] + V_i$.</li>
+                    <li>Ta lấy giá trị lớn nhất trong các lựa chọn đó.</li>
+                </ul>
+                <div class="math-formula">
+                    $DP[j] = \max_{1 \le i \le N} (DP[j - W_i] + V_i) \quad \text{với } W_i \le j$
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card border-green">
+            <span class="step-badge bg-green">Bước 3: Cài đặt và Truy vết (Mã Giả)</span>
+            <div class="step-content">
+                <div class="code-block">
+<span class="cmt">// 1. Khởi tạo</span>
+<span class="kw">Mảng</span> <span class="var">dp</span>[<span class="var">W</span>+1] = {0};
+<span class="kw">Mảng</span> <span class="var">trace</span>[<span class="var">W</span>+1] = {0}; <span class="cmt">// Lưu lại loại vật phẩm i đã chọn để tạo ra giá trị tối ưu tại j</span>
+
+<span class="cmt">// 2. Tính DP (Duyệt theo trọng lượng túi tăng dần)</span>
+<span class="kw">Duyệt</span> <span class="var">j</span> từ 1 đến <span class="var">W</span>:
+    <span class="kw">Duyệt</span> <span class="var">i</span> từ 1 đến <span class="var">N</span>: <span class="cmt">// Duyệt qua các loại đồ vật</span>
+        <span class="kw">Nếu</span> <span class="var">weight</span>[<span class="var">i</span>] <= <span class="var">j</span>:
+            <span class="kw">Nếu</span> <span class="var">dp</span>[<span class="var">j</span>] < <span class="var">dp</span>[<span class="var">j</span> - <span class="var">weight</span>[<span class="var">i</span>]] + <span class="var">val</span>[<span class="var">i</span>]:
+                <span class="var">dp</span>[<span class="var">j</span>] = <span class="var">dp</span>[<span class="var">j</span> - <span class="var">weight</span>[<span class="var">i</span>]] + <span class="var">val</span>[<span class="var">i</span>];
+                <span class="var">trace</span>[<span class="var">j</span>] = <span class="var">i</span>; <span class="cmt">// Lưu vết: Tại trọng lượng j, ta chọn vật i</span>
+
+<span class="kw">In ra</span> <span class="var">dp</span>[<span class="var">W</span>];
+
+<span class="cmt">// 3. Truy vết (Ngược từ W về 0)</span>
+<span class="var">curr</span> = <span class="var">W</span>;
+<span class="kw">Mảng</span> <span class="var">count</span>[<span class="var">N</span>+1] = {0};
+
+<span class="kw">Trong khi</span> <span class="var">curr</span> > 0:
+    <span class="var">item</span> = <span class="var">trace</span>[<span class="var">curr</span>];
+    <span class="kw">Nếu</span> <span class="var">item</span> == 0: <span class="kw">Dừng</span> (Không chọn thêm được gì);
+    
+    <span class="var">count</span>[<span class="var">item</span>]++;
+    <span class="var">curr</span> = <span class="var">curr</span> - <span class="var">weight</span>[<span class="var">item</span>];
+
+<span class="kw">In ra</span> số lượng từng loại đồ vật.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="simulation" class="tab-content">
+        <div class="control-panel">
+            <div class="control-row">
+                <label><b>Sức chứa túi (W):</b></label>
+                <input type="number" id="inpW" value="10" min="1" max="20">
+                <label><b>Số loại vật (N):</b></label>
+                <input type="number" id="inpN" value="3" min="1" max="5">
+                <button class="action-btn" onclick="genRandom()">🎲 Tạo Ngẫu Nhiên</button>
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <label><b>Dữ liệu (Mỗi dòng: Giá trị - Trọng lượng):</b></label>
+                <textarea id="inputData">5 3
+10 5
+6 10
+7 7</textarea>
+            </div>
+            
+            <div class="control-row" style="margin-top: 10px;">
+                <button class="action-btn" onclick="initSim()">▶ Khởi tạo & Chạy</button>
+                <button class="action-btn step-btn" id="btnStep" onclick="nextStep()" disabled>👟 Bước Tiếp Theo</button>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div class="grid-box">
+                <div class="grid-title">1. Danh sách Đồ vật</div>
+                <table class="data-table" id="tableItems">
+                    <thead><tr><th>ID</th><th>Giá trị (V)</th><th>Trọng lượng (W)</th></tr></thead>
+                    <tbody id="bodyItems"></tbody>
+                </table>
+            </div>
+            <div class="grid-box" style="flex: 2;">
+                <div class="grid-title">2. Mảng Quy Hoạch Động (DP) - Giá trị tối đa tại trọng lượng j</div>
+                <div id="dpContainer" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <div class="log-area" id="logArea"></div>
+    </div>
+
+    <div class="teacher-footer">
+        <div class="footer-title">Thầy Hoàng Đăng Quang - Luyện thi Chuyên Tin 10</div>
+        <div class="footer-info">
+            <span class="footer-item">📞 0903781593</span>
+            <span class="footer-item">🌐 luyenthichuyentin10.edu.vn</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- UI Logic ---
+    function openTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function log(msg, type = '') {
+        const area = document.getElementById('logArea');
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerHTML = msg;
+        area.appendChild(div);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    // --- Random Gen ---
+    function genRandom() {
+        const w = parseInt(document.getElementById('inpW').value);
+        const n = parseInt(document.getElementById('inpN').value);
+        
+        let output = ""; // Just items data
+        for(let i=0; i<n; i++) {
+            let val = Math.floor(Math.random() * 20) + 1;
+            let weight = Math.floor(Math.random() * 8) + 1;
+            output += `${val} ${weight}\n`;
+        }
+        document.getElementById('inputData').value = output.trim();
+        initSim();
+    }
+
+    // --- Visualization Data ---
+    let W_limit, N_items;
+    let items = []; // {v, w, id}
+    let dp = [], trace = [];
+    let simulator = null;
+
+    function renderItems() {
+        const tbody = document.getElementById('bodyItems');
+        tbody.innerHTML = '';
+        items.forEach((item, idx) => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `<td>${idx+1}</td><td>${item.v}</td><td>${item.w}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderDP(currJ = -1, highlightIndices = []) {
+        const container = document.getElementById('dpContainer');
+        container.innerHTML = '';
+        
+        for(let j=0; j<=W_limit; j++) {
+            let div = document.createElement('div');
+            div.className = 'dp-cell';
+            div.innerHTML = `<span class="dp-idx">${j}</span>${dp[j]}`;
+            
+            if (j === currJ) div.className += ' cell-calc';
+            if (highlightIndices.includes(j)) div.className += ' cell-highlight';
+            
+            container.appendChild(div);
+        }
+    }
+
+    // --- Simulation Logic ---
+    function* dpSim() {
+        log("--- Bắt đầu tính toán DP (Unbounded Knapsack) ---");
+        
+        // Base case
+        dp[0] = 0;
+        renderDP(0);
+        yield;
+
+        for (let j = 1; j <= W_limit; j++) {
+            log(`👉 <b>Xét sức chứa túi j = ${j}</b>`);
+            renderDP(j);
+            yield;
+
+            for (let i = 0; i < N_items; i++) {
+                let w_i = items[i].w;
+                let v_i = items[i].v;
+                let id = items[i].id;
+
+                if (w_i <= j) {
+                    let prevVal = dp[j - w_i];
+                    let newVal = prevVal + v_i;
+                    
+                    log(`- Thử vật ${id} (W=${w_i}, V=${v_i}): DP[${j}-${w_i}] + ${v_i} = ${prevVal} + ${v_i} = <b>${newVal}</b>`);
+                    
+                    if (newVal > dp[j]) {
+                        dp[j] = newVal;
+                        trace[j] = id; // Store item ID (1-based)
+                        log(`  => Cập nhật DP[${j}] = ${newVal} (Chọn vật ${id})`, 'log-hl');
+                        renderDP(j, [j - w_i]); // Highlight source
+                        yield; 
+                    }
+                }
+            }
+        }
+        
+        log(`🏁 <b>Giá trị lớn nhất: ${dp[W_limit]}</b>. Bắt đầu TRUY VẾT:`, 'log-res');
+        
+        // Traceback
+        let curr = W_limit;
+        let countMap = {};
+        
+        while (curr > 0) {
+            let itemID = trace[curr];
+            if (!itemID) break; // Should happen if dp[curr] is 0 or no item fit
+            
+            let itemObj = items[itemID-1];
+            if (!countMap[itemID]) countMap[itemID] = 0;
+            countMap[itemID]++;
+            
+            log(`Tại trọng lượng ${curr}: Trace=${itemID}. Chọn vật ${itemID}. Lùi về ${curr} - ${itemObj.w} = ${curr - itemObj.w}`, 'log-trace');
+            
+            renderDP(curr, [curr]); // Highlight path
+            curr -= itemObj.w;
+            yield;
+        }
+        
+        let resStr = "";
+        for(let id in countMap) {
+            resStr += `Vật ${id}: ${countMap[id]} cái; `;
+        }
+        log(`✅ <b>Kết quả chọn: ${resStr}</b>`, 'log-res');
+    }
+
+    // --- Controller ---
+    function initSim() {
+        W_limit = parseInt(document.getElementById('inpW').value);
+        N_items = parseInt(document.getElementById('inpN').value); // Though visually we rely on text input rows
+        
+        const raw = document.getElementById('inputData').value.trim().split('\n');
+        items = [];
+        raw.forEach((line, idx) => {
+            let parts = line.trim().split(/\s+/).map(Number);
+            if (parts.length >= 2) {
+                // Input format in example image for items: value weight
+                // Usually input is: n lines, each line: v w (or w v depending on problem statement, image says "giá trị" "trọng lượng" in description but sample input structure might vary. Let's assume Value Weight based on sample 8 5; 3 5 10... wait.
+                // Sample image says: Line 2: n ways (space separated). Line 3: weights.
+                // Wait, the image sample format is different from standard N lines.
+                // Image says: 
+                // Line 1: W N
+                // Line 2: N values
+                // Line 3: N weights
+                // BUT my textarea allows copy paste simplified "V W" per line for easier manual entry/random. 
+                // Let's stick to the textarea format: V W per line.
+                items.push({v: parts[0], w: parts[1], id: idx+1});
+            }
+        });
+        
+        // Update N based on actual lines if needed, or just use input N
+        N_items = items.length;
+
+        // Init DP
+        dp = new Array(W_limit + 1).fill(0);
+        trace = new Array(W_limit + 1).fill(0);
+
+        document.getElementById('logArea').innerHTML = '';
+        document.getElementById('btnStep').disabled = false;
+        
+        renderItems();
+        renderDP();
+        simulator = dpSim();
+        simulator.next(); 
+    }
+
+    function nextStep() {
+        if (simulator) {
+            let res = simulator.next();
+            if(res.done) document.getElementById('btnStep').disabled = true;
+        }
+    }
+</script>
+
+</body>
+</html>

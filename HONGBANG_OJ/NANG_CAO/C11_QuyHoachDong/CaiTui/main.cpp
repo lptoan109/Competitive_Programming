@@ -2,8 +2,8 @@
 using namespace std;
 #define ll long long
 const int MAXN = 1e4;
-ll n, w, v[MAXN+5], kl[MAXN+5], dp[MAXN+5][MAXN+5];
-vector<ll> kq;
+ll n, w, v[MAXN+5], kl[MAXN+5], dp[MAXN+5], trace[MAXN+5];
+ll kq[MAXN+5];
 int main()
 {
     ios_base::sync_with_stdio(0);
@@ -19,31 +19,27 @@ int main()
     }
     for(ll i = 1; i<=w; ++i){
         for(ll j = 1; j<=n; ++j){
-            if(kl[j]>i){
-                dp[i][j] = dp[i][j-1];
-                continue;
+            if(kl[j]<=i){
+                if(dp[i]<dp[i-kl[j]]+v[j]){
+                    dp[i] = dp[i-kl[j]]+v[j];
+                    trace[i] = j;
+                }
             }
-            dp[i][j] = max(dp[i][j-1], dp[i-kl[j]][j]+v[j]);
         }
     }
-    for(ll i = 1; i<=w; ++i){
-        for(ll j = 1; j<=n; ++j) cout << dp[i][j] << " ";
-        cout << "\n";
+//    for(ll i = 1; i<=w; ++i){
+//        cout << dp[i] << " ";
+//    }
+//    cout << "\n";
+    cout << dp[w] << "\n";
+    ll cur = w;
+    while(cur>0){
+        if(trace[cur]==0) break;
+        kq[trace[cur]]++;
+        cur-=kl[trace[cur]];
     }
-    ll i = w, j = n;
-    while(i>0 && j>0){
-        if(dp[w][j] == dp[i][j-1]){
-            j--;
-        }
-        else{
-            kq.push_back(j);
-            i-=kl[j];
-        }
-    }
-    cout << dp[w][n] << "\n";
-    sort(kq.begin(), kq.end());
-    for(ll k:kq){
-        cout << k << " ";
+    for(ll i = 1; i<=n; ++i){
+        if(kq[i]>0) cout << kq[i] << " " << i << "\n";
     }
     return 0;
 }

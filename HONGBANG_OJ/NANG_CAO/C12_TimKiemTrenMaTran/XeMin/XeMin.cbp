@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="DayConTangDaiNhat" />
+		<Option title="XeMin" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/DayConTangDaiNhat" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/XeMin" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -16,7 +16,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/DayConTangDaiNhat" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/XeMin" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -32,8 +32,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="SUBMAX.INP" />
-		<Unit filename="SUBMAX.OUT" />
+		<Unit filename="BFS02.INP" />
+		<Unit filename="BFS02.OUT" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />

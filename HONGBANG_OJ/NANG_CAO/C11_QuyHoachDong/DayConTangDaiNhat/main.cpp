@@ -26,5 +26,9 @@ int main()
     }
     ll kq = dp.size();
     cout << kq << "\n";
+    ll vt = pos[n];
+    while(vt>0){
+
+    }
     return 0;
 }
