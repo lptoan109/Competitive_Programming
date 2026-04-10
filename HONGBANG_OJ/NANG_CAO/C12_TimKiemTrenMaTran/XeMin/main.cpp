@@ -60,7 +60,7 @@ int main()
     a[dd][dc] = 2;
     bfs(nd, nc);
     if(!check){
-        cout << "No";
+        cout << "";
         return 0;
     }
     cout << dist[kqu][kqv] << "\n";
