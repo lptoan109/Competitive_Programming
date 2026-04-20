@@ -9,12 +9,21 @@ int main()
     freopen("HTBV.OUT", "w", stdout);
     int n;
     while(cin >> n){
-        if(n==1){
-            cout << 4 << " " << 0 << "\n";
-            continue;
+        double R = n - 0.5, R2 = R * R;
+        long long trong = 0,cham = 0;
+        for(int x = 1; x <= n; ++x){
+            for(int y = 1; y <= n; ++y){
+                double xa = 1.0 * x * x + 1.0 * y * y;
+                double gan=1.0*(x-1)*(x-1)+1.0*(y-1)*(y-1);
+                if(xa<=R2){
+                    trong++;
+                }
+                else if(gan<R2){
+                    cham++;
+                }
+            }
         }
-        long long cat = (2*n-2)*4+4;
-        cout << cat << " " << ((2*n)*(2*n))-cat-4 << "\n";
+        cout << cham * 4 << " "<< trong * 4 << "\n";
     }
     return 0;
 }
