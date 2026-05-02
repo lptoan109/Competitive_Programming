@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 string a,b;
-map<char, int> cnt;
+int cnt1[26], cnt2[26];
 int kq;
 int main()
 {
@@ -12,16 +12,15 @@ int main()
     cin >> a >> b;
     int na = a.size(), nb = b.size();
     for(int i = 0; i<na; ++i){
-        cnt[a[i]]++;
+        int idx = a[i]-'a';
+        cnt1[idx]++;
     }
     for(int i = 0; i<nb; ++i){
-        if(cnt.find(b[i])!=cnt.end()){
-            cnt[b[i]]--;
-        }
-        else cnt[b[i]]++;
+        int idx = b[i]-'a';
+        cnt2[idx]++;
     }
-    for(auto &i:cnt){
-        kq+=i.second;
+    for(int i = 0; i<=25; ++i){
+        kq+=abs(cnt1[i]-cnt2[i]);
     }
     cout << kq;
     return 0;

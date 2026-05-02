@@ -32,9 +32,9 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="XAYTHAP.CPP" />
 		<Unit filename="XAYTHAP.INP" />
 		<Unit filename="XAYTHAP.OUT" />
-		<Unit filename="main.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

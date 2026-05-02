@@ -15,7 +15,7 @@ int main()
     for(int i = 2; i<=n; ++i){
         cin >> idx >> val;
         if(idx>a.size()) a.push_back(val);
-        else a.insert(a.begin()+idx, val);
+        else a.insert(a.begin()+idx-1, val);
     }
     for(int i = 0; i<n; ++i){
         cout << a[i] << " ";
