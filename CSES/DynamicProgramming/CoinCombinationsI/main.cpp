@@ -1,8 +1,11 @@
+#pragma GCC optimize("Ofast")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
+#define ll int
 const int MAXN = 1e6;
-const ll mod = 1e9+7;
+const long long mod = 1e9+7;
 ll n, a[105], dp[MAXN+5], x;
 int main()
 {
@@ -11,14 +14,16 @@ int main()
     cin >> n >> x;
     for(ll i = 1; i<=n; ++i){
         cin >> a[i];
-        dp[a[i]] = 1;
     }
+    sort(a+1, a+1+n);
+    dp[0] = 1;
     for(ll i = 1; i<=x; ++i){
         for(ll j = 1; j<=n; ++j){
-            if(i-a[j]<0 || dp[i-a[j]]==0) continue;
+            if(a[j]>i) break;
 //            if(a[j]==i-a[j]) dp[i]= (dp[i]%mod+dp[i-a[j]]%mod)%mod;
 //            else dp[i]= (dp[i]%mod+dp[i-a[j]]%mod+dp[a[j]]%mod)%mod;
-            dp[i]= (dp[i]%mod+dp[i-a[j]]%mod)%mod;
+            dp[i]+=dp[i-a[j]];
+            if(dp[i]>=mod) dp[i]-=mod;
             //cout << i << " : " << dp[i] << "\n";
         }
     }
