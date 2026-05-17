@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-string s, kq="-1";
+string s;
 map<string, int> cnt;
 bool check;
 int n;
@@ -18,18 +18,7 @@ int main()
         cout << -1;
         return 0;
     }
-    n = s.size();
-    sort(s.begin(), s.end());
-    do{
-        if(cnt.find(s)!=cnt.end()){
-            break;
-        }
-        if(s[n-1]=='0'){
-            kq = s;
-        }
-        cnt[s]++;
-    }
-    while(next_permutation(s.begin(), s.end()));
-    cout << kq;
+    sort(s.begin(), s.end(), greater<char>());
+    cout << s;
     return 0;
 }

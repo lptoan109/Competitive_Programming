@@ -9,6 +9,7 @@ int main()
     freopen("CSTRING.INP", "r", stdin);
     freopen("CSTRING.OUT", "w", stdout);
     cin >> c >> n;
+    cin.ignore();
     getline(cin, s);
     for(int i = 1; i<=n; ++i){
         //cout << s << " ";
