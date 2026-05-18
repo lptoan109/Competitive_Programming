@@ -1,30 +1,33 @@
 #include <bits/stdc++.h>
 using namespace std;
-bool chiahet9(string t1){
-    int sl = t1.size();
-    long long s=0, so;
-    for(int i = 0; i<sl; ++i){
-        so = t1[i]-'0';
-        s+=so;
+bool check(string s){
+    long long kq = 0;
+    int bd = 0, n = s.size();
+    if(s[0]=='-') bd = 1;
+    for(; bd<n; ++bd){
+        int cs = s[bd]-'0';
+        //cout << cs << " ";
+        kq+=cs;
     }
-    return (t%9==0);
+    return kq%9==0;
 }
-long long t;
-string n, t1;
+int t;
 int main()
 {
     ios_base::sync_with_stdio(0);
-    cin.tie(0); cout.tie(0);
-    freopen("BTNC079.INP","r", stdin);
+    cin.tie(0);
+    //freopen("BTNC079.INP", "r", stdin);
+    //freopen("BTNC079.OUT", "w", stdout);
     cin >> t;
     cin.ignore();
     while(t--){
-        t1 = "";
-        while(getline(cin,n)){
-            if(n!="") t1 +=n;
-            else break;
+        string s  = "", temp = "";
+        while(getline(cin, temp)){
+            if(temp.empty()) break;
+            s+=temp;
         }
-        if(chiahet9(t1)) cout << "YES\n";
+        //cout << s << "\n";
+        if(check(s)) cout << "YES\n";
         else cout << "NO\n";
     }
     return 0;
