@@ -4,26 +4,26 @@ const string name = "BAI1";
 const int test = 100;
 mt19937 rng(7405);
 // Ham tra ve 1 so trong doan l r
-int rnd(int l, int r){
-    return abs((int)rng()%(r-l+1))+1;
+long long rnd(long long l, long long r){
+    return l+abs((long long)rng()%(r-l+1))+1;
 }
 // Ham tao test
 void generatet(){
     ofstream inp((name+".INP").c_str());
     int n = 1e5, q = 1e3;
-    cout << n << " " << q << "\n";
+    inp << n << " " << q << "\n";
     for(int i = 1; i<=n; ++i){
-        cout << rnd(1, 1e9) << " ";
+        inp << rnd(1, 1e9) << " ";
     }
     while(q--){
         int l = rnd(1, n);
-        cout << l << " " << rnd(l, n) << "\n";
+        inp << l << " " << rnd(l, n) << "\n";
     }
     inp.close();
 }
 // Ham kiem tra output cua 2 file co giong nhau khong
 bool checktest(){
-    if(system(("fc"+name+".OUT"+name+".ANS").c_str())!=0) return false;
+    if(system(("fc "+name+".OUT "+name+".ANS").c_str())!=0) return false;
     else return true;
 }
 // Ham xu ly chinh
