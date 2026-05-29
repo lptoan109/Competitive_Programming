@@ -44,34 +44,38 @@ int main()
         a1[i] = a[i];
         a2[i] = a[i];
     }
-//    if(n<=(int)1e3){
-//        sub1();
-//        return 0;
-//    }
+    if(n<=(int)1e3){
+        sub1();
+        return 0;
+    }
     for(int i = 2; i<=n; ++i){
         if(a1[i-1]>=a1[i]){
             pf[i] = a1[i-1]+1-a1[i]+pf[i-1];
             a1[i] += a1[i-1]+1-a1[i];
         }
+        //cout << pf[i] << " ";
     }
-
+    //cout << "\n";
     for(int i = n-1; i>=1; --i){
         if(a2[i+1]>=a2[i]){
             sf[i] = a2[i+1]+1-a2[i]+sf[i+1];
             a2[i] += a2[i+1]+1-a2[i];
         }
     }
-    for(int i = 1; i<=n; ++i){
-        cout << pf[i] << " ";
-    }
-    cout << "\n";
-    for(int i = 1; i<=n; ++i){
-        cout << sf[i] << " ";
-    }
-    cout << "\n";
+//    for(int i = 1; i<=n; ++i){
+//        cout << pf[i] << " ";
+//    }
+//    cout << "\n";
+//    for(int i = 1; i<=n; ++i){
+//        cout << sf[i] << " ";
+//    }
+//    cout << "\n";
     for(int i = 2; i<n; ++i){
-        kq = min(kq, pf[i]+sf[i]+a[i]-min(a1[i], a2[i]));
+        kq = min(kq, pf[i-1]+sf[i-1]+a[i]-min(a1[i], a2[i]));
+        //cout << pf[i]+sf[i]+a[i]-min(a1[i], a2[i]) << " ";
     }
-    cout << kq;
+    //cout << "\n";
+    if(kq==(long long)1e18) cout << 0;
+    else cout << kq;
     return 0;
 }

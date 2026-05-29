@@ -1,8 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
+const int MAXN = 1e6;
 int n, m;
 vector<int> a, b;
-vector<long long> ps;
+vector<long long> df(MAXN+5), du(MAXN+5);
 int main(){
     ios_base::sync_with_stdio(0);
     cin.tie(0);
@@ -22,15 +23,23 @@ int main(){
         cin >> val;
         cur +=val;
         if(cur>t){
-            m = i-1;
+            m = i;
+            b.push_back(val);
             break;
         }
         b.push_back(val);
     }
-    ps.push_back(b[0]);
     for(int i = 1; i<m; ++i){
-        ps.push_back(ps[i-1]+b[i]);
+        b[i]+=b[i-1];
     }
-
+    for(int i = 0; i<n; ++i){
+        int it  = distance(b.begin(), lower_bound(b.begin(), b.end(), a[i]));
+        df[it+1]--;
+        df[1]++;
+        du[it+1] = a[i]-b[it];
+    }
+    for(int i = 0; i<m; ++i){
+        df[i] += df[i-1];
+    }
     return 0;
 }
