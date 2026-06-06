@@ -1,0 +1,10 @@
+#include <bits/stdc++.h>
+using namespace std;
+int w;
+int main()
+{
+    cin >> w;
+    if(w%2!=0 || w==2) cout << "NO";
+    else cout << "YES";
+    return 0;
+}
