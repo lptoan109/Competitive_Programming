@@ -1,19 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int MAXN = 1e5;
-#define ll long long
-ll a[MAXN+5], n, d = 0;
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-    cin >> n;
-    ll s1 = 0, s0 = 0;
-    for(ll i = 0; i<n; ++i){
-        cin >> a[i];
-        if(a[i]==0) s0 +=1;
-        if(a[i]==1) s1+=1;
-        if(s0==s1) d++;
+string s;
+map<int, int> cnt;
+int n, cur, kq;
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cin >> s;
+    n = s.size();
+    cnt[0] = 1;
+    for(int i = 0; i<n; ++i){
+        if(s[i]=='0') cur--;
+        else cur++;
+        kq+=cnt[cur];
+        cnt[cur]++;
+        //cout << i << " : " << cur << "\n";
     }
-    cout << d;
+//    for(auto &i:cnt){
+//        kq+=(i.second*(i.second-1)/2);
+//        cout << i.first << " " << i.second << "\n";
+//    }
+    cout << kq;
     return 0;
 }
