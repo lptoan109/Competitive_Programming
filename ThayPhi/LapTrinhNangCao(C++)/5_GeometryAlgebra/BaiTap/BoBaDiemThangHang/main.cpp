@@ -1,29 +1,31 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
+struct point{
+    int x,y;
+};
+bool check(point a, point b, point k){
+    int t1 = b.y-a.y;
+    int t2 = a.x-b.x;
+    int t3 = a.x*b.y - a.y*b.x;
+    return t1*k.x + t2*k.y + t3 == 0;
+}
 int n;
-map<int, int> cnt1, cnt2;
 long long kq;
-int main()
-{
+vector<point> a;
+int main(){
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cin >> n;
     for(int i = 1; i<=n; ++i){
         int x, y;
         cin >> x >> y;
-        cnt1[x]++;
-        cnt2[y]++;
+        a.push_back({x,y});
     }
-    for(auto &i:cnt1){
-        if(i.second >=3){
-            long long t = i.second;
-            kq+=(t*(t-1)*(t-2)/6);
-        }
-    }
-    for(auto &i:cnt2){
-        if(i.second >=3){
-            long long t = i.second;
-            kq+=(t*(t-1)*(t-2)/6);
+    for(int i = 0; i<n-2; ++i){
+        for(int j = i+1; j<n-1; ++j){
+            for(int k = j+1; k<n; ++k){
+                if(check(a[i], a[j], a[k])) kq++;
+            }
         }
     }
     cout << kq;
