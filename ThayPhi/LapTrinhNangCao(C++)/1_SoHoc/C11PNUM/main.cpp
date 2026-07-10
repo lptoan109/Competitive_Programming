@@ -35,11 +35,11 @@ void solve(unsigned long long n, int k){
         temp = kq;
     }
     cout << kq;
-    cout << "\n";
 }
 int t;
 int main(){
     ios_base::sync_with_stdio(0);
+    cin.tie(0);
     pre();
     cin >> t;
     while(t--){
@@ -47,6 +47,7 @@ int main(){
         int k;
         cin >> n >> k;
         solve(n, k);
+        cout << "\n";
     }
     return 0;
 }

@@ -33,23 +33,25 @@ long long query(int x, int l, int r, int u, int v){
     int mid = (l+r)/2;
     long long q1 = query(2*x, l, mid, u,v);
     long long q2 = query(2*x+1, mid+1, r, u ,v);
-    return q1+q2;
+    return __gcd(q1, q2);
 }
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cin >> n >> q;
-    for(int i = 1; i<=n; ++i) cin >> a[i];
+    //for(int i = 1; i<=n; ++i) cin >> a[i];
     build(1,1,n);
     while(q--){
         int type;
         cin >> type;
         if(type == 1){
-            int pos,val;
-            cin >> pos >> val;
-            a[pos]+=val;
-            update(1,1,n,pos,a[pos]);
+            int l, r,val;
+            cin >> l >> r >> val;
+            a[l]+=val;
+            a[r+1]-=val;
+            update(1,1,n,l,a[l]);
+            update(1, 1, n, r+1, a[r+1]);
         }
         if(type == 2){
             int l,r;

@@ -17,6 +17,18 @@ void pre(){
         else pf[i] = pf[i-1];
     }
 }
+int binsearch(int l, int r, int k){
+    int temp = -1;
+    while(l<=r){
+        int m = l+(r-l)/2;
+        if(pf[m]<=k){
+            temp = m;
+            r = m-1;
+        }
+        else l = m+1;
+    }
+    return temp;
+}
 int n, k;
 map<int, int> cnt;
 long long kq;
@@ -27,9 +39,12 @@ int main()
     pre();
     cin >> n >> k;
     for(int i = 1; i<=n; ++i){
-        //pf[r] - pf[l] = k
-        kq +=cnt[pf[i]-k];
-        cnt[pf[i]]++;
+        //pf[r] - pf[l] = k ==> pf[r]-k = pf[l]
+        int l = binsearch(1, i, pf[i]-k);
+        if(l!=-1){
+            cout << l << " " << i << " " << kq << "\n";
+            kq+=(i-l+1);
+        }
     }
     cout << kq;
     return 0;
