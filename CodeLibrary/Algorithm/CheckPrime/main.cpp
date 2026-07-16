@@ -29,3 +29,18 @@ void sangEratosthenes(int a, int b){
     }
 }
 //} Độ phức tạp: O(max(a,b)*log(max(a,b))
+
+//{
+long long binarypow(long long a, long long b, long long m){
+    a%=m;
+    long long kq = 1;
+    while(b!=0){
+        if(b&1){
+            kq = (kq%m*a%m)%m;
+        }
+        a = (a%m*a%m)%m;
+        b/=2;
+    }
+    return kq;
+}
+//}
