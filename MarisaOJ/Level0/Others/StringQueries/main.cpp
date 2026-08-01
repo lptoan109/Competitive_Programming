@@ -1,26 +1,26 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
-vector<string> cnt;
-int n, q;
-int main()
-{
+char a[26][26][26][26][26];
+int n;
+int main(){
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cin >> n;
     for(int i = 1; i<=n; ++i){
         string s;
         cin >> s;
-        cnt.push_back(s);
+        int m = s.size();
+        if(m==1) a[s[0]]++;
+        if(m==2) a[s[0]][s[1]]++;
+        if(m==3) a[s[0]][s[1]][s[2]]++;
+        if(m==4) a[s[0]][s[1]][s[2]][s[3]]++;
+        else a[s[0]][s[1]][s[2]][s[3]][s[4]]++;
     }
-    sort(cnt.begin(), cnt.end());
-    cin >> q;
-    for(int i = 1; i<=q; ++i){
+    cin >> n;
+    while(n--){
         string s;
         cin >> s;
-        if(binary_search(cnt.begin(), cnt.end(), s)){
-            cout << "YES\n";
-        }
-        else cout << "NO\n";
+        int m = s.size();
+        if(m==1 && a[s[0]]==1)
     }
-    return 0;
 }

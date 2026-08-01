@@ -1,0 +1,30 @@
+name: Auto Commit Daily
+
+on:
+  schedule:
+    # 17:00 UTC = 00:00 (12h đêm) giờ Việt Nam
+    - cron: '0 17 * * *'
+  workflow_dispatch: # Cho phép bấm chạy thủ công để test
+
+# Cấp quyền ghi trực tiếp cho GitHub Action
+permissions:
+  contents: write
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update log file
+        run: |
+          echo "Last updated on $(date)" > auto_commit_log.txt
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "lephuoctoan6411@gmail.com"
+          git config --local user.name "lptoan109"
+          git add auto_commit_log.txt
+          git commit -m "Auto update: $(date)" || echo "No changes to commit"
+          git push
